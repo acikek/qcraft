@@ -17,6 +17,7 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,8 @@ public class QBlockData extends PersistentState {
     public static QBlockData fromNbt(NbtCompound nbt) {
         QBlockData blockData = new QBlockData();
         List<QBlockLocation> locations = CODEC.parse(NbtOps.INSTANCE, nbt.getList(DATA, NbtElement.COMPOUND_TYPE))
-                .result().get();
+                .result()
+                .orElse(Collections.emptyList());
         blockData.locations.addAll(locations);
         return blockData;
     }
