@@ -1,0 +1,9 @@
+{
+  "block.qcraft.quantum_ore": "Quantum Ore",
+  "block.qcraft.deepslate_quantum_ore": "Deepslate Quantum Ore",
+  "item.qcraft.quantum_dust": "Quantum Dust",
+  "item.qcraft.observation_essence": "Essence of Observation",
+  "item.qcraft.superposition_essence": "Essence of Superposition",
+  "item.qcraft.entanglement_essence": "Essence of Entanglement",
+  "itemGroup.qcraft.main": "QCraft"
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "qcraft",
+  "version": "0.1.0",
+  "name": "QCraft Reborn",
+  "description": "A port of QCraft to modern-day Fabric.",
+  "authors": [
+    "acikek"
+  ],
+  "contact": {
+    "repo": "https://github.com/acikek/qcraft"
+  },
+  "license": "MIT",
+  "icon": "assets/qcraft/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.acikek.qcraft.client.QCraftClient"
+    ],
+    "main": [
+      "com.acikek.qcraft.QCraft"
+    ]
+  },
+  "mixins": [
+    "qcraft.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.12",
+    "fabric": "*",
+    "minecraft": "1.18.1"
+  }
+}

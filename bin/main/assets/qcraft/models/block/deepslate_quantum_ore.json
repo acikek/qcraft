@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "qcraft:block/deepslate_quantum_ore"
+  }
+}

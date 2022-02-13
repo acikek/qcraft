@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "qcraft:block/quantum_ore" },
+    "lit=true": { "model": "qcraft:block/quantum_ore_lit" }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DD",
+    "DD"
+  ],
+  "key": {
+    "D": {
+      "item": "qcraft:quantum_dust"
+    }
+  },
+  "result": {
+    "item": "qcraft:superposition_essence",
+    "count": 1
+  }
+}
