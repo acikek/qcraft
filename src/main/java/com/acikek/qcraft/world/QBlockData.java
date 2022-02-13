@@ -38,10 +38,8 @@ public class QBlockData extends PersistentState {
 
     public static QBlockData fromNbt(NbtCompound nbt) {
         QBlockData blockData = new QBlockData();
-        //System.out.println();
         List<QBlockLocation> locations = CODEC.parse(NbtOps.INSTANCE, nbt.getList(DATA, NbtElement.COMPOUND_TYPE))
                 .result().get();
-        System.out.println("Locations: " + locations);
         blockData.locations.addAll(locations);
         return blockData;
     }
