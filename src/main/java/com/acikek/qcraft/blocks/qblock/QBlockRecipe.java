@@ -1,19 +1,19 @@
 package com.acikek.qcraft.blocks.qblock;
 
 import com.acikek.qcraft.QCraft;
-import com.acikek.qcraft.blocks.Blocks;
-import com.acikek.qcraft.items.Essence;
-import com.google.common.collect.Iterables;
+import com.acikek.qcraft.items.QBlockEssence;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.*;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.SpecialCraftingRecipe;
+import net.minecraft.recipe.SpecialRecipeSerializer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class QBlockRecipe extends SpecialCraftingRecipe {
 
@@ -23,36 +23,26 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
         super(id);
     }
 
-    public enum Face {
-
-        UP(0, 0),
-        NORTH(1, 1),
-        WEST(3, 2),
-        EAST(5, 3),
-        DOWN(6, 4),
-        SOUTH(7, 5);
-
-        public int slot;
-        public int index;
-
-        Face(int slot, int index) {
-            this.slot = slot;
-            this.index = index;
+    public static ItemStack applyNbt(ItemStack stack, List<String> faces) {
+        for (int i = 0; i < faces.size(); i++) {
+            stack.getOrCreateSubNbt("faces").putString(QBlock.Face.values()[i].name(), faces.get(i));
         }
-
-        public static int[] EMPTY_SLOTS = {
-                2, 8
-        };
+        return stack;
     }
 
-    @Override
-    public ItemStack craft(CraftingInventory inventory) {
-        ItemStack stack = new ItemStack(Blocks.QUANTUM_BLOCK);
-        for (Face face : Face.values()) {
+    public static ItemStack applyNbt(ItemStack stack, CraftingInventory inventory) {
+        for (QBlock.Face face : QBlock.Face.values()) {
             Item slot = inventory.getStack(face.slot).getItem();
             stack.getOrCreateSubNbt("faces").putString(face.name(), Registry.ITEM.getId(slot).toString());
         }
         return stack;
+    }
+
+    @Override
+    public ItemStack craft(CraftingInventory inventory) {
+        QBlockEssence essence = (QBlockEssence) inventory.getStack(QBlock.Face.CENTER).getItem();
+        ItemStack stack = new ItemStack(essence.getQBlock());
+        return applyNbt(stack, inventory);
     }
 
     @Override
@@ -62,14 +52,14 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
 
     @Override
     public boolean matches(CraftingInventory inventory, World world) {
-        Item item = inventory.getStack(4).getItem();
-        if (item instanceof Essence essence) {
-            for (int i : Face.EMPTY_SLOTS) {
+        Item item = inventory.getStack(QBlock.Face.CENTER).getItem();
+        if (item instanceof QBlockEssence) {
+            for (int i : QBlock.Face.EMPTY_SLOTS) {
                 if (!inventory.getStack(i).isEmpty()) {
                     return false;
                 }
             }
-            for (Face face : Face.values()) {
+            for (QBlock.Face face : QBlock.Face.values()) {
                 ItemStack slot = inventory.getStack(face.slot);
                 if (slot.isEmpty()) {
                     continue;
@@ -78,7 +68,7 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
                     return false;
                 }
             }
-            return essence.essenceType == Essence.Type.SUPERPOSITION;
+            return true;
         }
         return false;
     }
@@ -89,6 +79,6 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
     }
 
     public static void register() {
-        SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(QCraft.ID, "crafting_special_quantum_block"), new SpecialRecipeSerializer<>(QBlockRecipe::new));
+        SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(QCraft.ID, "crafting_special_qblock"), new SpecialRecipeSerializer<>(QBlockRecipe::new));
     }
 }

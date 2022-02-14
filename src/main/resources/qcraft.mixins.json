@@ -4,6 +4,7 @@
   "package": "com.acikek.qcraft.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlockMixin"
   ],
   "client": [
   ],

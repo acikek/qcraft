@@ -12,9 +12,9 @@ import java.util.Map;
 public class Items {
 
     public static final Item QUANTUM_DUST = new Item(defaultSettings());
-    public static final Item OBSERVATION_ESSENCE = new Essence(defaultSettings(), Essence.Type.OBSERVATION);
-    public static final Item SUPERPOSITION_ESSENCE = new Essence(defaultSettings(), Essence.Type.SUPERPOSITION);
-    public static final Item ENTANGLEMENT_ESSENCE = new Essence(defaultSettings(), Essence.Type.ENTANGLEMENT);
+    public static final Essence OBSERVATION_ESSENCE = new Essence(defaultSettings(), Essence.Type.OBSERVATION);
+    public static final Essence SUPERPOSITION_ESSENCE = new Essence(defaultSettings(), Essence.Type.SUPERPOSITION);
+    public static final Essence ENTANGLEMENT_ESSENCE = new Essence(defaultSettings(), Essence.Type.ENTANGLEMENT);
 
     public static FabricItemSettings defaultSettings() {
         return new FabricItemSettings().group(QCraft.ITEM_GROUP);

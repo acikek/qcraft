@@ -1,6 +1,7 @@
 package com.acikek.qcraft.world;
 
 import com.acikek.qcraft.QCraft;
+import com.acikek.qcraft.blocks.qblock.QBlock;
 import com.acikek.qcraft.blocks.qblock.QBlockRecipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -30,7 +31,6 @@ public class QBlockData extends PersistentState {
     public List<QBlockLocation> locations = new ArrayList<>();
 
     public QBlockData() {
-        System.out.println();
     }
 
     public static QBlockData get(World world) {
@@ -53,17 +53,17 @@ public class QBlockData extends PersistentState {
         }
         String[] faces = new String[6];
         for (int i = 0; i < faces.length; i++) {
-            faces[i] = nbt.getString(QBlockRecipe.Face.values()[i].name());
+            faces[i] = nbt.getString(QBlock.Face.values()[i].name());
         }
         return faces;
     }
 
-    public boolean addBlock(BlockPos blockPos, World world, ItemStack stack) {
+    public boolean addBlock(QBlock.Type type, BlockPos blockPos, World world, ItemStack stack) {
         String[] faces = getFaces(stack);
         if (faces == null || getBlock(blockPos, world).isPresent()) {
             return false;
         }
-        locations.add(new QBlockLocation(blockPos, world.getRegistryKey().getValue(), List.of(faces)));
+        locations.add(new QBlockLocation(type, blockPos, world.getRegistryKey().getValue(), List.of(faces)));
         markDirty();
         return true;
     }
@@ -100,30 +100,39 @@ public class QBlockData extends PersistentState {
     public static class QBlockLocation {
 
         public static Codec<QBlockLocation> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(
-                    BlockPos.CODEC.fieldOf("position").forGetter(l -> l.pos),
-                    Identifier.CODEC.fieldOf("world").forGetter(l -> l.world),
-                    Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces)
-            )
-                    .apply(instance, QBlockLocation::new)
+                instance.group(
+                        QBlock.Type.CODEC.fieldOf("type").forGetter(l -> l.type),
+                        BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
+                        Identifier.CODEC.fieldOf("world").forGetter(l -> l.world),
+                        Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces)
+                )
+                        .apply(instance, QBlockLocation::new)
         );
 
+        public QBlock.Type type;
         public BlockPos pos;
         public Identifier world;
         public List<String> faces;
 
-        public QBlockLocation(BlockPos pos, Identifier world, List<String> faces) {
+        public QBlockLocation(QBlock.Type type, BlockPos pos, Identifier world, List<String> faces) {
+            this.type = type;
             this.pos = pos;
             this.world = world;
             this.faces = faces;
         }
 
-        public Block getFace(int index) {
+        public Block getFaceBlock(int index) {
             return Registry.BLOCK.get(Identifier.tryParse(faces.get(index)));
         }
 
-        public Block getFace(QBlockRecipe.Face face) {
-            return getFace(face.index);
+        public Block getFaceBlock(QBlock.Face face) {
+            return getFaceBlock(face.index);
+        }
+
+        public ItemStack getItemStack() {
+            ItemStack stack = new ItemStack(this.type.resolveBlock());
+            QBlockRecipe.applyNbt(stack, faces);
+            return stack;
         }
     }
 }

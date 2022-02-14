@@ -19,8 +19,8 @@ public class Blocks {
 
     public static final Block QUANTUM_ORE = new QuantumOre(QuantumOre.QUANTUM_ORE_SETTINGS);
     public static final Block DEEPSLATE_QUANTUM_ORE = new QuantumOre(QuantumOre.DEEPSLATE_QUANTUM_ORE_SETTINGS);
-    public static final Block OBSERVER_DEPENDENT_BLOCK = new QBlock(FabricBlockSettings.of(Material.STONE).strength(5.0f, 5.0f));
-    public static final Block QUANTUM_BLOCK = new QBlock(FabricBlockSettings.of(Material.STONE).strength(5.0f, 5.0f));
+    public static final QBlock OBSERVER_DEPENDENT_BLOCK = new QBlock(FabricBlockSettings.of(Material.STONE).strength(5.0f, 5.0f), QBlock.Type.OBSERVER_DEPENDENT);
+    public static final QBlock QUANTUM_BLOCK = new QBlock(FabricBlockSettings.of(Material.STONE).strength(5.0f, 5.0f), QBlock.Type.QUANTUM);
 
     public static Map<String, Block> BLOCKS = new HashMap<>();
 
