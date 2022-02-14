@@ -23,7 +23,6 @@ public class QCraft implements ModInitializer {
     public void onInitialize() {
         Blocks.registerAll();
         Items.registerAll();
-        QBlock.registerBlockEntity();
         QBlockRecipe.register();
 
         /*ServerWorldEvents.UNLOAD.register((server, world) -> {
