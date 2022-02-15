@@ -46,47 +46,35 @@ public class QBlockData extends PersistentState {
         return blockData;
     }
 
-    public static String[] getFaces(ItemStack stack) {
-        NbtCompound nbt = stack.getSubNbt("faces");
-        if (nbt == null) {
-            return null;
-        }
-        String[] faces = new String[6];
-        for (int i = 0; i < faces.length; i++) {
-            faces[i] = nbt.getString(QBlock.Face.values()[i].name());
-        }
-        return faces;
-    }
-
-    public boolean addBlock(QBlock.Type type, BlockPos blockPos, World world, ItemStack stack) {
-        String[] faces = getFaces(stack);
-        if (faces == null || getBlock(blockPos, world).isPresent()) {
+    public boolean addBlock(QBlock.Type type, BlockPos blockPos, ItemStack stack) {
+        String[] faces = QBlock.getFaces(stack);
+        if (faces == null || getBlock(blockPos).isPresent()) {
             return false;
         }
-        locations.add(new QBlockLocation(type, blockPos, world.getRegistryKey().getValue(), List.of(faces)));
+        locations.add(new QBlockLocation(type, blockPos, List.of(faces)));
+        System.out.println(locations);
         markDirty();
         return true;
     }
 
-    public Optional<QBlockLocation> getBlock(BlockPos blockPos, World world) {
+    public Optional<QBlockLocation> getBlock(BlockPos blockPos) {
         return locations.stream()
-                .filter(loc -> loc.world.equals(world.getRegistryKey().getValue()))
                 .filter(loc -> loc.pos.asLong() == blockPos.asLong())
                 .findFirst();
     }
 
-    public boolean removeBlock(BlockPos blockPos, World world) {
-        Optional<QBlockLocation> block = getBlock(blockPos, world);
-        if (block.isEmpty()) {
-            return false;
-        }
-        locations.remove(block.get());
-        markDirty();
-        return true;
+    public void removeBlock(BlockPos blockPos) {
+        this.getBlock(blockPos).ifPresent(this::removeBlock);
     }
 
-    public boolean hasBlock(BlockPos blockPos, World world) {
-        return getBlock(blockPos, world).isPresent();
+    public void removeBlock(QBlockLocation location) {
+        if (locations.remove(location)) {
+            markDirty();
+        }
+    }
+
+    public boolean hasBlock(BlockPos blockPos) {
+        return getBlock(blockPos).isPresent();
     }
 
     @Override
@@ -103,7 +91,6 @@ public class QBlockData extends PersistentState {
                 instance.group(
                         QBlock.Type.CODEC.fieldOf("type").forGetter(l -> l.type),
                         BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
-                        Identifier.CODEC.fieldOf("world").forGetter(l -> l.world),
                         Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces)
                 )
                         .apply(instance, QBlockLocation::new)
@@ -111,13 +98,11 @@ public class QBlockData extends PersistentState {
 
         public QBlock.Type type;
         public BlockPos pos;
-        public Identifier world;
         public List<String> faces;
 
-        public QBlockLocation(QBlock.Type type, BlockPos pos, Identifier world, List<String> faces) {
+        public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces) {
             this.type = type;
             this.pos = pos;
-            this.world = world;
             this.faces = faces;
         }
 
@@ -131,8 +116,7 @@ public class QBlockData extends PersistentState {
 
         public ItemStack getItemStack() {
             ItemStack stack = new ItemStack(this.type.resolveBlock());
-            QBlockRecipe.applyNbt(stack, faces);
-            return stack;
+            return QBlockRecipe.applyFaces(stack, faces);
         }
     }
 }

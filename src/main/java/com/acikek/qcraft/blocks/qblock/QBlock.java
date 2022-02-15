@@ -10,6 +10,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -84,10 +86,22 @@ public class QBlock extends Block  {
         this.type = type;
     }
 
+    public static String[] getFaces(ItemStack stack) {
+        NbtCompound nbt = stack.getSubNbt("faces");
+        if (nbt == null) {
+            return null;
+        }
+        String[] faces = new String[6];
+        for (int i = 0; i < faces.length; i++) {
+            faces[i] = nbt.getString(Face.values()[i].name());
+        }
+        return faces;
+    }
+
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient()) {
-            Optional<QBlockData.QBlockLocation> block = QBlockData.get(world).getBlock(pos, world);
+            Optional<QBlockData.QBlockLocation> block = QBlockData.get(world).getBlock(pos);
             block.ifPresent(qBlockLocation -> world.setBlockState(pos, qBlockLocation.getFaceBlock(world.random.nextInt(6)).getDefaultState()));
         }
         return ActionResult.SUCCESS;

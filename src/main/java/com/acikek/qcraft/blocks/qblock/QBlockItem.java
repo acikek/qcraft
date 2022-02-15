@@ -20,7 +20,7 @@ public class QBlockItem extends BlockItem {
         }
         if (result) {
             QBlock qBlock = (QBlock) getBlock();
-            return QBlockData.get(context.getWorld()).addBlock(qBlock.type, context.getBlockPos(), context.getWorld(), context.getStack());
+            return QBlockData.get(context.getWorld()).addBlock(qBlock.type, context.getBlockPos(), context.getStack());
         }
         return false;
     }

@@ -12,8 +12,8 @@ import java.util.Map;
 public class Items {
 
     public static final Item QUANTUM_DUST = new Item(defaultSettings());
-    public static final Essence OBSERVATION_ESSENCE = new Essence(defaultSettings(), Essence.Type.OBSERVATION);
-    public static final Essence SUPERPOSITION_ESSENCE = new Essence(defaultSettings(), Essence.Type.SUPERPOSITION);
+    public static final QBlockEssence OBSERVATION_ESSENCE = new QBlockEssence(defaultSettings(), Essence.Type.OBSERVATION);
+    public static final QBlockEssence SUPERPOSITION_ESSENCE = new QBlockEssence(defaultSettings(), Essence.Type.SUPERPOSITION);
     public static final Essence ENTANGLEMENT_ESSENCE = new Essence(defaultSettings(), Essence.Type.ENTANGLEMENT);
 
     public static FabricItemSettings defaultSettings() {
