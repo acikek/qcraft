@@ -19,8 +19,13 @@ public class QBlockItem extends BlockItem {
             return result;
         }
         if (result) {
-            QBlock qBlock = (QBlock) getBlock();
-            return QBlockData.get(context.getWorld()).addBlock(qBlock.type, context.getBlockPos(), context.getStack());
+            QBlockData data = QBlockData.get(context.getWorld());
+            QBlockData.QBlockLocation added = data.addBlock(((QBlock) getBlock()).type, context.getBlockPos(), context.getStack());
+            if (added == null) {
+                return false;
+            }
+            data.observe(added, context.getWorld(), context.getPlayer());
+            return true;
         }
         return false;
     }

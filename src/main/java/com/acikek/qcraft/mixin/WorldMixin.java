@@ -25,10 +25,13 @@ public abstract class WorldMixin {
             int maxUpdateDepth,
             CallbackInfoReturnable<Boolean> cir
     ) {
-        if (!(pos instanceof BlockPos.Mutable)) {
-            World world = (World) (Object) this;
-            if (!isClient()) {
-                QBlockData.get(world).removeBlock(pos);
+        if (!isClient()) {
+            QBlockData data = QBlockData.get((World) (Object) this);
+            if (!data.settingBlock) {
+                data.removeBlock(pos);
+            }
+            else {
+                data.settingBlock = false;
             }
         }
     }

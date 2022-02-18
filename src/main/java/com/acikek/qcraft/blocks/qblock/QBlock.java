@@ -1,26 +1,14 @@
 package com.acikek.qcraft.blocks.qblock;
 
 import com.acikek.qcraft.blocks.Blocks;
-import com.acikek.qcraft.items.Essence;
-import com.acikek.qcraft.items.Items;
-import com.acikek.qcraft.world.QBlockData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-import java.util.Optional;
+import java.util.Random;
 
-public class QBlock extends Block  {
+public class QBlock extends InertQBlock {
 
     public enum Type {
 
@@ -41,6 +29,13 @@ public class QBlock extends Block  {
             return switch (this) {
                 case OBSERVER_DEPENDENT -> Blocks.OBSERVER_DEPENDENT_BLOCK;
                 case QUANTUM -> Blocks.QUANTUM_BLOCK;
+            };
+        }
+
+        public InertQBlock resolveInert() {
+            return switch(this) {
+                case OBSERVER_DEPENDENT -> Blocks.INERT_OBSERVER_DEPENDENT_BLOCK;
+                case QUANTUM -> Blocks.INERT_QUANTUM_BLOCK;
             };
         }
 
@@ -79,10 +74,26 @@ public class QBlock extends Block  {
         };
     }
 
+    public enum Axis {
+
+        X,
+        Y,
+        Z;
+
+        public Face getRandomFace(Random rng) {
+            boolean value = rng.nextBoolean();
+            return switch (this) {
+                case X -> value ? Face.EAST : Face.WEST;
+                case Y -> value ? Face.UP : Face.DOWN;
+                case Z -> value ? Face.SOUTH : Face.NORTH;
+            };
+        }
+    }
+
     public Type type;
 
-    public QBlock(Settings settings, Type type) {
-        super(settings);
+    public QBlock(Type type) {
+        super();
         this.type = type;
     }
 
@@ -96,15 +107,5 @@ public class QBlock extends Block  {
             faces[i] = nbt.getString(Face.values()[i].name());
         }
         return faces;
-    }
-
-    @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!world.isClient()) {
-            Optional<QBlockData.QBlockLocation> block = QBlockData.get(world).getBlock(pos);
-            block.ifPresent(qBlockLocation -> world.setBlockState(pos, qBlockLocation.getFaceBlock(world.random.nextInt(6)).getDefaultState()));
-        }
-        return ActionResult.SUCCESS;
-        //return super.onUse(state, world, pos, player, hand, hit);
     }
 }

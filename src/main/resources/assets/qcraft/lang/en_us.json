@@ -1,6 +1,10 @@
 {
   "block.qcraft.quantum_ore": "Quantum Ore",
   "block.qcraft.deepslate_quantum_ore": "Deepslate Quantum Ore",
+  "block.qcraft.inert_observer_dependent_block": "Inert Observer-Dependent Block",
+  "block.qcraft.inert_quantum_block": "Inert Quantum Block",
+  "block.qcraft.observer_dependent_block": "Observer-Dependent Block",
+  "block.qcraft.quantum_block": "Quantum Block",
   "item.qcraft.quantum_dust": "Quantum Dust",
   "item.qcraft.observation_essence": "Essence of Observation",
   "item.qcraft.superposition_essence": "Essence of Superposition",

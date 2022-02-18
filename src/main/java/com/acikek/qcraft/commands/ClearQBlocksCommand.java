@@ -18,12 +18,13 @@ public class ClearQBlocksCommand implements Command<ServerCommandSource> {
         QBlockData data = QBlockData.get(context.getSource().getWorld());
         int size = data.locations.size();
         data.locations.clear();
-        context.getSource().getPlayer().sendMessage(Text.of("Cleared QBlocks for the current world (" + size + " removed)"), false);
+        context.getSource().getPlayer().sendMessage(Text.of("Removed " + size + " qBlocks from the current world"), false);
         return 0;
     }
 
     public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal(NAME)
+                .requires(source -> source.hasPermissionLevel(4))
                 .executes(this));
     }
 }

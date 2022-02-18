@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "qcraft:block/observer_dependent_block"
+  }
+}
