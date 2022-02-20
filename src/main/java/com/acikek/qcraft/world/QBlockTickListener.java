@@ -12,9 +12,9 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
     public QBlockData data;
 
     public static double PITCH_THRESHOLD = 60.0;
-    public static double YAW_THRESHOLD = 75.0;
+    public static double YAW_THRESHOLD = 80.0;
 
-    // These methods took 2 days to write.
+    // These methods took 4 days to write.
     // Massive thanks to sssubtlety, nHail, and dirib!
 
     public double getPitch(Vec3d between) {
@@ -30,12 +30,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
 
     public double getPitchDifference(double playerPitch, double betweenPitch, double yawDiff) {
         if (yawDiff > 90.0) {
-            if (playerPitch > 0.0) {
-                betweenPitch = 180.0 - betweenPitch;
-            }
-            else {
-                betweenPitch += 180.0;
-            }
+            betweenPitch = (playerPitch > 0.0 ? 180.0 : -180.0) - betweenPitch;
         }
         return Math.abs(playerPitch - betweenPitch);
     }

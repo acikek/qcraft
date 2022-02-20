@@ -24,7 +24,9 @@ public class QBlockItem extends BlockItem {
             if (added == null) {
                 return false;
             }
-            data.observe(added, context.getWorld(), context.getPlayer());
+            if (context.getPlayer() != null) {
+                data.observe(added, context.getWorld(), context.getPlayer());
+            }
             return true;
         }
         return false;

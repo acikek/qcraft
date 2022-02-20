@@ -13,6 +13,9 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -30,13 +33,24 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
         super(id);
     }
 
+    public static MutableText formatFace(String faceName, MutableText text) {
+        text.setStyle(text.getStyle().withItalic(false)).formatted(Formatting.GRAY);
+        MutableText faceText = new LiteralText(" (" + faceName + ")")
+                .setStyle(Style.EMPTY.withItalic(false))
+                .formatted(Formatting.DARK_GRAY);
+        text.append(faceText);
+        return text;
+    }
+
     public static ItemStack applyFaces(ItemStack stack, List<String> faces) {
         NbtCompound display = new NbtCompound();
         NbtList lore = new NbtList();
         for (int i = 0; i < faces.size(); i++) {
-            stack.getOrCreateSubNbt("faces").putString(QBlock.Face.values()[i].name(), faces.get(i));
+            String faceName = QBlock.Face.values()[i].name();
+            stack.getOrCreateSubNbt("faces").putString(faceName, faces.get(i));
             Block block = Registry.BLOCK.get(Identifier.tryParse(faces.get(i)));
-            lore.addElement(i, NbtString.of(Text.Serializer.toJson(block.getName().formatted(Formatting.RESET, Formatting.GRAY))));
+            MutableText text = formatFace(faceName, block.getName());
+            lore.addElement(i, NbtString.of(Text.Serializer.toJson(text)));
         }
         display.put("Lore", lore);
         if (stack.getNbt() != null) {
