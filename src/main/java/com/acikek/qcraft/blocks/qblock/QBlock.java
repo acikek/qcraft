@@ -33,7 +33,7 @@ public class QBlock extends InertQBlock {
         }
 
         public InertQBlock resolveInert() {
-            return switch(this) {
+            return switch (this) {
                 case OBSERVER_DEPENDENT -> Blocks.INERT_OBSERVER_DEPENDENT_BLOCK;
                 case QUANTUM -> Blocks.INERT_QUANTUM_BLOCK;
             };

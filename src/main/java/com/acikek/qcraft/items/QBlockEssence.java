@@ -10,7 +10,7 @@ public class QBlockEssence extends Essence {
     }
 
     public QBlock getQBlock() {
-        return switch(this.essenceType) {
+        return switch(essenceType) {
             case OBSERVATION -> Blocks.OBSERVER_DEPENDENT_BLOCK;
             case SUPERPOSITION -> Blocks.QUANTUM_BLOCK;
             default -> null;

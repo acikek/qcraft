@@ -35,6 +35,11 @@ public class QBlockData extends PersistentState {
     public QBlockData() {
     }
 
+    /**
+     * Gets or creates {@link QBlockData} state from the specified world.
+     * @param world The {@link ServerWorld} to get the state from.
+     * @return The {@link QBlockData} instance.
+     */
     public static QBlockData get(World world) {
         QBlockData data = ((ServerWorld) world).getPersistentStateManager().getOrCreate(QBlockData::fromNbt, QBlockData::new, KEY);
         data.filterBlocks(world);
@@ -53,6 +58,9 @@ public class QBlockData extends PersistentState {
         return blockData;
     }
 
+    /**
+     * Filters the {@link QBlockLocation}s based on whether their current block state is possible.
+     */
     public void filterBlocks(World world) {
         int size = locations.size();
         locations.removeIf(location -> !location.checkBlockState(world.getBlockState(location.pos)));
@@ -61,18 +69,31 @@ public class QBlockData extends PersistentState {
         }
     }
 
+    /**
+     * @return The {@link QBlockLocation}s that are in a loaded chunk.
+     */
     public List<QBlockLocation> getLoadedLocations(ServerWorld world) {
         return locations.stream()
                 .filter(location -> world.getChunkManager().isChunkLoaded(location.pos.getX() / 16, location.pos.getZ() / 16))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @param loaded The locations that are in loaded chunks.
+     * @return The {@link QBlockLocation}s that are within a close distance of the player.
+     * @see QBlockData#getLoadedLocations(ServerWorld)
+     */
     public List<QBlockLocation> getLocalLocations(List<QBlockLocation> loaded, PlayerEntity player) {
         return loaded.stream()
                 .filter(location -> location.pos.isWithinDistance(player.getEyePos(), 160))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Adds a {@link QBlockLocation} to this state's locations.
+     * @param stack The stack to read faces data from.
+     * @return The added location.
+     */
     public QBlockLocation addBlock(QBlock.Type type, BlockPos blockPos, ItemStack stack) {
         String[] faces = QBlock.getFaces(stack);
         if (faces == null || getBlock(blockPos).isPresent()) {
@@ -91,7 +112,7 @@ public class QBlockData extends PersistentState {
     }
 
     public void removeBlock(BlockPos blockPos) {
-        this.getBlock(blockPos).ifPresent(this::removeBlock);
+        getBlock(blockPos).ifPresent(this::removeBlock);
     }
 
     public void removeBlock(QBlockLocation location) {
@@ -115,10 +136,11 @@ public class QBlockData extends PersistentState {
     }
 
     public void observe(QBlockLocation location, World world, PlayerEntity player) {
+        Vec3d dists = location.getBetween(player.getEyePos());
         switch (location.type) {
-            case OBSERVER_DEPENDENT -> setFaceBlock(world, location, location.getClosestFace(player.getEyePos()));
-            case QUANTUM -> setFaceBlock(world, location, location.getClosestAxis(location.getBetween(player.getEyePos())).getRandomFace(world.random));
-        };
+            case OBSERVER_DEPENDENT -> setFaceBlock(world, location, location.getClosestFace(dists));
+            case QUANTUM -> setFaceBlock(world, location, location.getClosestAxis(dists).getRandomFace(world.random));
+        }
         location.observed = true;
     }
 
@@ -153,6 +175,14 @@ public class QBlockData extends PersistentState {
         public List<String> faces;
         public boolean observed;
 
+        /**
+         * Constructs a {@link QBlockLocation}.<br>
+         * To add a location to a {@link QBlockData} instance, see {@link QBlockData#addBlock(QBlock.Type, BlockPos, ItemStack)}.
+         * @param type The qBlock's type. This determines its observation behavior.
+         * @param pos The block position of the location.
+         * @param faces The block face IDs. To read these from an item, see {@link QBlock#getFaces(ItemStack)}.
+         * @param observed Whether this location is currently observed.
+         */
         public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces, boolean observed) {
             this.type = type;
             this.pos = pos;
@@ -164,19 +194,34 @@ public class QBlockData extends PersistentState {
             return Registry.BLOCK.get(Identifier.tryParse(faces.get(index)));
         }
 
+        /**
+         * @return The block at the specified face.
+         * @see QBlockLocation#getFaceBlock(QBlock.Face)
+         */
         public Block getFaceBlock(QBlock.Face face) {
             return getFaceBlock(face.index);
         }
 
+        /**
+         * @return The stack, based on block type, with the faces applied to its NBT.
+         * @see QBlockRecipe#applyFaces(ItemStack, List)
+         */
         public ItemStack getItemStack() {
-            ItemStack stack = new ItemStack(this.type.resolveBlock());
+            ItemStack stack = new ItemStack(type.resolveBlock());
             return QBlockRecipe.applyFaces(stack, faces);
         }
 
+        /**
+         * @return The vector between the block position and a player's eye position.
+         */
         public Vec3d getBetween(Vec3d eyePos) {
-            return eyePos.subtract(Vec3d.ofCenter(this.pos));
+            return eyePos.subtract(Vec3d.ofCenter(pos));
         }
 
+        /**
+         * @return The closest axis to the player.
+         * @see QBlockLocation#getBetween(Vec3d)
+         */
         public QBlock.Axis getClosestAxis(Vec3d dists) {
             double absX = Math.abs(dists.x);
             double absY = Math.abs(dists.y);
@@ -192,39 +237,35 @@ public class QBlockData extends PersistentState {
             }
         }
 
-        public QBlock.Face getClosestFace(Vec3d eyePos) {
-            Vec3d dists = getBetween(eyePos);
-            QBlock.Axis axis = getClosestAxis(dists);
-            return switch (axis) {
+        /**
+         * @return The closest block face to the player.
+         * @see QBlockLocation#getBetween(Vec3d)
+         */
+        public QBlock.Face getClosestFace(Vec3d dists) {
+            return switch (getClosestAxis(dists)) {
                 case X -> dists.x > 0 ? QBlock.Face.EAST : QBlock.Face.WEST;
                 case Y -> dists.y > 0 ? QBlock.Face.UP : QBlock.Face.DOWN;
                 case Z -> dists.z > 0 ? QBlock.Face.SOUTH : QBlock.Face.NORTH;
             };
         }
 
+        /**
+         * @return Whether the specified block state is possible given the valid block faces.
+         */
         public boolean checkBlockState(BlockState state) {
             Block block = state.getBlock();
             if (block instanceof InertQBlock) {
                 return true;
             }
             String id = Registry.BLOCK.getId(block).toString();
-            return this.faces.contains(id);
+            return faces.contains(id);
         }
 
-        // These methods took 2 days to write.
-        // Massive thanks to sssubtlety, nHail, and dirib!
-
-        public double getPitchDifference(PlayerEntity player, Vec3d between) {
-            double pitch = Math.atan(between.y / Math.sqrt(between.x * between.x + between.z * between.z));
-            //System.out.println("BlockPitch: " + Math.toDegrees(pitch));
-            return Math.abs(player.getPitch() - Math.toDegrees(pitch));
-        }
-
-        public double getYawDifference(PlayerEntity player, Vec3d between) {
-            Vec3d rotated = between.rotateY((float) Math.toRadians(270));
-            double yaw = Math.atan2(rotated.z, rotated.x);
-            //System.out.println("BlockYaw: " + Math.toDegrees(yaw));
-            return 180.0 - Math.abs(Math.abs(player.getYaw() - Math.toDegrees(yaw)) - 180.0);
+        /**
+         * @return Whether the location can be observed (a player's central position is within a certain distance).
+         */
+        public boolean canBeUnobserved(Vec3d center) {
+            return !pos.isWithinDistance(center, 2.0);
         }
     }
 }
