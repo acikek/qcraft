@@ -43,7 +43,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
     @Override
     public void onStartTick(ServerWorld world) {
         if (data == null) {
-            data = QBlockData.get(world);
+            data = QBlockData.get(world, true);
         }
         if (data.locations.isEmpty()) {
             return;

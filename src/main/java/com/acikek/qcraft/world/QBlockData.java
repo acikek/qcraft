@@ -31,6 +31,7 @@ public class QBlockData extends PersistentState {
 
     public List<QBlockLocation> locations = new ArrayList<>();
     public boolean settingBlock = false;
+    public QBlockLocation removed = null;
 
     public QBlockData() {
     }
@@ -40,9 +41,11 @@ public class QBlockData extends PersistentState {
      * @param world The {@link ServerWorld} to get the state from.
      * @return The {@link QBlockData} instance.
      */
-    public static QBlockData get(World world) {
+    public static QBlockData get(World world, boolean filter) {
         QBlockData data = ((ServerWorld) world).getPersistentStateManager().getOrCreate(QBlockData::fromNbt, QBlockData::new, KEY);
-        data.filterBlocks(world);
+        if (filter) {
+            data.filterBlocks(world);
+        }
         return data;
     }
 

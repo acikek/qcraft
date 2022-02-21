@@ -26,9 +26,14 @@ public abstract class WorldMixin {
             CallbackInfoReturnable<Boolean> cir
     ) {
         if (!isClient()) {
-            QBlockData data = QBlockData.get((World) (Object) this);
+            QBlockData data = QBlockData.get((World) (Object) this, false);
             if (!data.settingBlock) {
-                data.removeBlock(pos);
+                data.getBlock(pos).ifPresent(location -> {
+                    if (location.isStateImpossible(state)) {
+                        data.removed = location;
+                        data.removeBlock(location);
+                    }
+                });
             }
             else {
                 data.settingBlock = false;

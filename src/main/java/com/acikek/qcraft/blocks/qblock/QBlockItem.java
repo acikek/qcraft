@@ -19,7 +19,7 @@ public class QBlockItem extends BlockItem {
             return result;
         }
         if (result) {
-            QBlockData data = QBlockData.get(context.getWorld());
+            QBlockData data = QBlockData.get(context.getWorld(), true);
             QBlockData.QBlockLocation added = data.addBlock(((QBlock) getBlock()).type, context.getBlockPos(), context.getStack());
             if (added == null) {
                 return false;

@@ -5,31 +5,27 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mixin(Block.class)
 public abstract class BlockMixin {
 
-    private static void setQBlockDrop(BlockPos pos, ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
-        Optional<QBlockData.QBlockLocation> qBlockLocation = QBlockData.get(world).getBlock(pos);
-        qBlockLocation.ifPresent(loc -> {
-            cir.setReturnValue(List.of(loc.getItemStack()));
-        });
+    private static void setQBlockDrop(ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
+        QBlockData data = QBlockData.get(world, false);
+        if (data.removed != null) {
+            cir.setReturnValue(List.of(data.removed.getItemStack()));
+        }
     }
 
     @Inject(method = "getDroppedStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;)Ljava/util/List;",
@@ -41,7 +37,7 @@ public abstract class BlockMixin {
             @Nullable BlockEntity blockEntity,
             CallbackInfoReturnable<List<ItemStack>> cir
     ) {
-        setQBlockDrop(pos, world, cir);
+        setQBlockDrop(world, cir);
     }
 
     @Inject(method = "getDroppedStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)Ljava/util/List;",
@@ -56,19 +52,6 @@ public abstract class BlockMixin {
             CallbackInfoReturnable<List<ItemStack>> cir,
             LootContext.Builder builder
     ) {
-        setQBlockDrop(pos, world, cir);
-    }
-
-    @Inject(method = "onBreak", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "HEAD"))
-    private void removeQBlock(
-            World world,
-            BlockPos pos,
-            BlockState state,
-            PlayerEntity player,
-            CallbackInfo ci
-    ) {
-        if (!world.isClient()) {
-            QBlockData.get(world).removeBlock(pos);
-        }
+        setQBlockDrop(world, cir);
     }
 }
