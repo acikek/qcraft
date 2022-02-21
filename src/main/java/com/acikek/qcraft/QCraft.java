@@ -1,7 +1,8 @@
 package com.acikek.qcraft;
 
 import com.acikek.qcraft.blocks.Blocks;
-import com.acikek.qcraft.blocks.qblock.QBlockRecipe;
+import com.acikek.qcraft.blocks.recipe.EntangledPairRecipe;
+import com.acikek.qcraft.blocks.recipe.QBlockRecipe;
 import com.acikek.qcraft.commands.ClearQBlocksCommand;
 import com.acikek.qcraft.items.Items;
 import com.acikek.qcraft.world.QBlockTickListener;
@@ -31,6 +32,7 @@ public class QCraft implements ModInitializer {
         Blocks.registerAll();
         Items.registerAll();
         QBlockRecipe.register();
+        EntangledPairRecipe.register();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             new ClearQBlocksCommand().register(dispatcher);

@@ -1,6 +1,9 @@
-package com.acikek.qcraft.blocks.qblock;
+package com.acikek.qcraft.blocks.recipe;
 
 import com.acikek.qcraft.QCraft;
+import com.acikek.qcraft.blocks.qblock.QBlock;
+import com.acikek.qcraft.blocks.qblock.QBlockItem;
+import com.acikek.qcraft.items.Essence;
 import com.acikek.qcraft.items.QBlockEssence;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.CraftingInventory;
@@ -42,7 +45,7 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
         return text;
     }
 
-    public static ItemStack applyFaces(ItemStack stack, List<String> faces) {
+    public static void applyFaces(ItemStack stack, List<String> faces) {
         NbtCompound display = new NbtCompound();
         NbtList lore = new NbtList();
         for (int i = 0; i < faces.size(); i++) {
@@ -56,7 +59,6 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
         if (stack.getNbt() != null) {
             stack.getNbt().put("display", display);
         }
-        return stack;
     }
 
     @Override
@@ -68,7 +70,8 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
             faces.add(Registry.ITEM.getId(item).toString());
         }
         ItemStack stack = new ItemStack(essence.getQBlock());
-        return applyFaces(stack, faces);
+        applyFaces(stack, faces);
+        return stack;
     }
 
     @Override
@@ -78,29 +81,32 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
 
     @Override
     public boolean matches(CraftingInventory inventory, World world) {
-        Item item = inventory.getStack(QBlock.Face.CENTER).getItem();
-        if (item instanceof QBlockEssence) {
-            for (int i : QBlock.Face.EMPTY_SLOTS) {
-                if (!inventory.getStack(i).isEmpty()) {
-                    return false;
-                }
-            }
-            boolean atLeastOne = false;
-            for (QBlock.Face face : QBlock.Face.values()) {
-                ItemStack slot = inventory.getStack(face.slot);
-                if (slot.isEmpty()) {
-                    continue;
-                }
-                if (!(slot.getItem() instanceof BlockItem) || slot.getItem() instanceof QBlockItem) {
-                    return false;
-                }
-                if (!atLeastOne) {
-                    atLeastOne = true;
-                }
-            }
-            return atLeastOne;
+        int essenceSlot = Essence.findSlot(inventory);
+        if (essenceSlot == -1
+                || essenceSlot < QBlock.Face.CENTER
+                || !(inventory.getStack(essenceSlot).getItem() instanceof QBlockEssence)) {
+            return false;
         }
-        return false;
+        int diff = essenceSlot - QBlock.Face.CENTER;
+        for (int i : QBlock.Face.EMPTY_SLOTS) {
+            if (!inventory.getStack(i + diff).isEmpty()) {
+                return false;
+            }
+        }
+        boolean atLeastOne = false;
+        for (QBlock.Face face : QBlock.Face.values()) {
+            ItemStack slot = inventory.getStack(face.slot + diff);
+            if (slot.isEmpty()) {
+                continue;
+            }
+            if (!(slot.getItem() instanceof BlockItem) || slot.getItem() instanceof QBlockItem) {
+                return false;
+            }
+            if (!atLeastOne) {
+                atLeastOne = true;
+            }
+        }
+        return atLeastOne;
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.acikek.qcraft.blocks.qblock;
 
 import com.acikek.qcraft.blocks.Blocks;
+import com.acikek.qcraft.world.QBlockData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.Random;
 
@@ -36,6 +38,13 @@ public class QBlock extends InertQBlock {
             return switch (this) {
                 case OBSERVER_DEPENDENT -> Blocks.INERT_OBSERVER_DEPENDENT_BLOCK;
                 case QUANTUM -> Blocks.INERT_QUANTUM_BLOCK;
+            };
+        }
+
+        public Face pickFace(QBlockData.QBlockLocation location, Vec3d dists, Random random) {
+            return switch (this) {
+                case OBSERVER_DEPENDENT -> location.getClosestFace(dists);
+                case QUANTUM -> location.getClosestAxis(dists).getRandomFace(random);
             };
         }
 
@@ -97,15 +106,7 @@ public class QBlock extends InertQBlock {
         this.type = type;
     }
 
-    public static String[] getFaces(ItemStack stack) {
-        NbtCompound nbt = stack.getSubNbt("faces");
-        if (nbt == null) {
-            return null;
-        }
-        String[] faces = new String[6];
-        for (int i = 0; i < faces.length; i++) {
-            faces[i] = nbt.getString(Face.values()[i].name());
-        }
-        return faces;
+    public static QBlock getBlockFromItem(Item item) {
+        return (QBlock) Block.getBlockFromItem(item);
     }
 }

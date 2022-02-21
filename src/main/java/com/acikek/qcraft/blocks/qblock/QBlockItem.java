@@ -5,6 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+
+import java.util.Arrays;
 
 public class QBlockItem extends BlockItem {
 
@@ -27,8 +31,27 @@ public class QBlockItem extends BlockItem {
             if (context.getPlayer() != null) {
                 data.observe(added, context.getWorld(), context.getPlayer());
             }
+            System.out.println(data.frequencies);
             return true;
         }
         return false;
+    }
+
+    public static String[] getFaces(ItemStack stack) {
+        NbtCompound nbt = stack.getSubNbt("faces");
+        if (nbt == null) {
+            return null;
+        }
+        String[] faces = new String[6];
+        for (int i = 0; i < faces.length; i++) {
+            faces[i] = nbt.getString(QBlock.Face.values()[i].name());
+        }
+        return faces;
+    }
+
+    public static boolean checkStacks(ItemStack left, ItemStack right) {
+        return !left.isEmpty() && !right.isEmpty()
+                && QBlock.getBlockFromItem(left.getItem()).type == QBlock.getBlockFromItem(right.getItem()).type
+                && Arrays.equals(getFaces(left), getFaces(right));
     }
 }

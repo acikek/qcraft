@@ -1,3 +1,3 @@
-# QCraft Reborn
+# qCraft Reimagined
 
 WIP
