@@ -63,7 +63,7 @@ public class QBlockData extends PersistentState {
      */
     public void filterBlocks(World world) {
         int size = locations.size();
-        locations.removeIf(location -> !location.checkBlockState(world.getBlockState(location.pos)));
+        locations.removeIf(location -> location.isStateImpossible(world.getBlockState(location.pos)));
         if (locations.size() < size) {
             QCraft.LOGGER.error("Removed " + (size - locations.size()) + " invalid qBlocks");
         }
@@ -105,16 +105,26 @@ public class QBlockData extends PersistentState {
         return result;
     }
 
+    /**
+     * @return The location at the specified block position, if present.
+     */
     public Optional<QBlockLocation> getBlock(BlockPos blockPos) {
         return locations.stream()
                 .filter(loc -> loc.pos.asLong() == blockPos.asLong())
                 .findFirst();
     }
 
+    /**
+     * Removes the block at the specified block position, if present.
+     */
     public void removeBlock(BlockPos blockPos) {
         getBlock(blockPos).ifPresent(this::removeBlock);
     }
 
+    /**
+     * Removes the specified block location.
+     * @see QBlockData#removeBlock(BlockPos)
+     */
     public void removeBlock(QBlockLocation location) {
         if (locations.remove(location)) {
             markDirty();
@@ -125,6 +135,10 @@ public class QBlockData extends PersistentState {
         return getBlock(blockPos).isPresent();
     }
 
+    /**
+     * A wrapper for {@link World#setBlockState(BlockPos, BlockState)}.<br>
+     * This sets {@link QBlockData#settingBlock} to true so that {@link com.acikek.qcraft.mixin.WorldMixin} functions properly.
+     */
     public void setBlockState(World world, BlockPos pos, BlockState state) {
         settingBlock = true;
         world.setBlockState(pos, state);
@@ -250,15 +264,15 @@ public class QBlockData extends PersistentState {
         }
 
         /**
-         * @return Whether the specified block state is possible given the valid block faces.
+         * @return Whether the specified block state is impossible given the valid block faces.
          */
-        public boolean checkBlockState(BlockState state) {
+        public boolean isStateImpossible(BlockState state) {
             Block block = state.getBlock();
             if (block instanceof InertQBlock) {
-                return true;
+                return false;
             }
             String id = Registry.BLOCK.getId(block).toString();
-            return faces.contains(id);
+            return !faces.contains(id);
         }
 
         /**
