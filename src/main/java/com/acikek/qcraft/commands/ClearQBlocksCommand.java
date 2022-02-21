@@ -8,6 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 public class ClearQBlocksCommand implements Command<ServerCommandSource> {
 
@@ -18,7 +19,8 @@ public class ClearQBlocksCommand implements Command<ServerCommandSource> {
         QBlockData data = QBlockData.get(context.getSource().getWorld(), true);
         int size = data.locations.size();
         data.locations.clear();
-        context.getSource().getPlayer().sendMessage(Text.of("Removed " + size + " qBlocks from the current world"), false);
+        Text message = new TranslatableText("command.qcraft.clear_qblocks.success", size);
+        context.getSource().getPlayer().sendMessage(message, false);
         return 0;
     }
 
