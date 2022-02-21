@@ -30,7 +30,6 @@ public abstract class WorldMixin {
             if (!data.settingBlock) {
                 data.getBlock(pos).ifPresent(location -> {
                     if (location.isStateImpossible(state)) {
-                        data.removed = location;
                         data.removeBlock(location);
                     }
                 });
