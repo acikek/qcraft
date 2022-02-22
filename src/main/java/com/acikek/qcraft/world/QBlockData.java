@@ -16,13 +16,13 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.*;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,7 @@ public class QBlockData extends PersistentState {
     public static final String KEY = QCraft.ID + "_" + DATA;
 
     public List<QBlockLocation> locations = new ArrayList<>();
-    public Map<UUID, Pair<QBlockLocation, QBlockLocation>> frequencies = new HashMap<>();
+    public Map<UUID, QBlockLocation.Pair> frequencies = new HashMap<>();
     public boolean settingBlock = false;
     public QBlockLocation removed = null;
 
@@ -48,7 +48,8 @@ public class QBlockData extends PersistentState {
     public static QBlockData get(World world, boolean filter) {
         QBlockData data = ((ServerWorld) world).getPersistentStateManager().getOrCreate(QBlockData::fromNbt, QBlockData::new, KEY);
         if (filter) {
-            data.filterBlocks(world);
+            data.filterLocations(world);
+            data.filterFrequencies();
         }
         return data;
     }
@@ -70,35 +71,37 @@ public class QBlockData extends PersistentState {
     /**
      * Filters the {@link QBlockLocation}s based on whether their current block state is possible.
      */
-    public void filterBlocks(World world) {
+    public void filterLocations(World world) {
         int size = locations.size();
         locations.removeIf(location -> location.isStateImpossible(world.getBlockState(location.pos)));
         if (locations.size() < size) {
             QCraft.LOGGER.error("Removed " + (size - locations.size()) + " invalid qBlocks");
         }
-        /*for (Map.Entry<String, QBlockLocation[]> frequency : frequencies.entrySet()) {
-            for (int i = 0; i < frequency.getValue().length; i++) {
-                if (frequency.getValue()[i] != null && !locations.contains(frequency.getValue()[i])) {
+    }
+
+    public void filterFrequencies() {
+        int size = frequencies.size();
+        for (Map.Entry<UUID, QBlockLocation.Pair> frequency : frequencies.entrySet()) {
+            for (QBlockLocation location : frequency.getValue().getBoth()) {
+                if (location != null && !locations.contains(location)) {
                     frequencies.remove(frequency.getKey());
                     break;
                 }
             }
-        }*/
+        }
+        if (frequencies.size() < size) {
+            QCraft.LOGGER.error("Removed " + (size - frequencies.size()) + " invalid frequencies");
+        }
     }
 
     public void fillFrequencies() {
         for (QBlockLocation location : locations) {
-            UUID uuid = UUID.fromString(location.frequency);
+            UUID uuid = location.getFrequencyUUID();
             if (!frequencies.containsKey(uuid)) {
-                frequencies.put(uuid, new Pair<>(location, null));
+                frequencies.put(uuid, new QBlockLocation.Pair(location));
             }
-            else {
-                Pair<QBlockLocation, QBlockLocation> pair = frequencies.get(uuid);
-                if (pair.getRight() != null) {
-                    QCraft.LOGGER.error("Invalid frequency '" + location.frequency + "': more than 2 members");
-                    continue;
-                }
-                frequencies.get(uuid).setRight(location);
+            else if (!frequencies.get(uuid).add(location)) {
+                QCraft.LOGGER.error("Failed to add " + location + " to frequency '" + uuid + "'");
             }
         }
     }
@@ -123,9 +126,9 @@ public class QBlockData extends PersistentState {
                 .collect(Collectors.toList());
     }
 
-    public void getFrequency(QBlockLocation location, Consumer<Pair<QBlockLocation, QBlockLocation>> consumer) {
+    public void getFrequency(QBlockLocation location, Consumer<QBlockLocation.Pair> consumer) {
         if (location.frequency != null) {
-            UUID uuid = UUID.fromString(location.frequency);
+            UUID uuid = location.getFrequencyUUID();
             if (frequencies.containsKey(uuid)) {
                 consumer.accept(frequencies.get(uuid));
             }
@@ -153,7 +156,12 @@ public class QBlockData extends PersistentState {
         QBlockLocation result = new QBlockLocation(type, blockPos, List.of(faces), false, frequency != null ? frequency.toString() : null);
         locations.add(result);
         if (frequency != null) {
-            frequencies.put(frequency, new Pair<>(result, null));
+            if (frequencies.containsKey(frequency)) {
+                frequencies.get(frequency).add(result);
+            }
+            else {
+                frequencies.put(frequency, new QBlockLocation.Pair(result));
+            }
         }
         markDirty();
         return result;
@@ -183,17 +191,8 @@ public class QBlockData extends PersistentState {
         if (locations.remove(location)) {
             removed = location;
             getFrequency(location, pair -> {
-                if (pair.getLeft() == location) {
-                    if (pair.getRight() != null) {
-                        pair.setLeft(pair.getRight());
-                        pair.setRight(null);
-                    }
-                    else {
-                        frequencies.remove(UUID.fromString(location.frequency));
-                    }
-                }
-                else {
-                    pair.setRight(null);
+                if (pair.remove(location)) {
+                    frequencies.remove(location.getFrequencyUUID());
                 }
             });
             markDirty();
@@ -223,11 +222,10 @@ public class QBlockData extends PersistentState {
         QBlock.Face face = location.type.pickFace(location, dists, world.random);
         observe(location, world, face);
         getFrequency(location, pair -> {
-            if (pair.getLeft() == location && pair.getRight() != null) {
-                observe(pair.getRight(), world, face);
-            }
-            else if (pair.getRight() == location) {
-                observe(pair.getLeft(), world, face);
+            QBlockLocation other = pair.getOther(location);
+            System.out.println(other);
+            if (other != null) {
+                setFaceBlock(world, other, face);
             }
         });
     }
@@ -237,10 +235,28 @@ public class QBlockData extends PersistentState {
         location.observed = true;
     }
 
-    public void unobserve(QBlockLocation location, World world) {
+    public void unobserve(QBlockLocation location, World world, boolean checkFrequency) {
         BlockState state = location.type.resolveInert().getDefaultState();
         setBlockState(world, location.pos, state);
         location.observed = false;
+        if (checkFrequency) {
+            getFrequency(location, pair -> {
+                QBlockLocation other = pair.getOther(location);
+                if (other != null && !other.observed) {
+                    unobserve(other, world, false);
+                }
+            });
+        }
+    }
+
+    public boolean getOtherNotObserved(QBlockLocation location) {
+        AtomicBoolean otherObserved = new AtomicBoolean(false);
+        getFrequency(location, pair -> otherObserved.set(pair.getOtherObserved(location)));
+        return !otherObserved.get();
+    }
+
+    public boolean canBeUnobserved(QBlockLocation location, Vec3d center) {
+        return getOtherNotObserved(location) && !location.pos.isWithinDistance(center, 2.0);
     }
 
     @Override
@@ -251,6 +267,9 @@ public class QBlockData extends PersistentState {
         return nbt;
     }
 
+    /**
+     * Represents a placed qBlock in the world.
+     */
     public static class QBlockLocation {
 
         public static Codec<QBlockLocation> CODEC = RecordCodecBuilder.create(instance ->
@@ -285,6 +304,10 @@ public class QBlockData extends PersistentState {
             this.faces = faces;
             this.observed = observed;
             this.frequency = frequency;
+        }
+
+        public UUID getFrequencyUUID() {
+            return UUID.fromString(frequency);
         }
 
         public Block getFaceBlock(int index) {
@@ -362,16 +385,86 @@ public class QBlockData extends PersistentState {
             return !faces.contains(id);
         }
 
-        /**
-         * @return Whether the location can be observed (a player's central position is within a certain distance).
-         */
-        public boolean canBeUnobserved(Vec3d center) {
-            return !pos.isWithinDistance(center, 2.0);
-        }
-
         @Override
         public String toString() {
             return "qBlock (" + type + ", " + pos.toShortString() + ")";
+        }
+
+        /**
+         * Represents a pair of entangled qBlocks.
+         */
+        public static class Pair {
+
+            public QBlockLocation left;
+            public QBlockLocation right = null;
+
+            public Pair(QBlockLocation first) {
+                left = first;
+            }
+
+            /**
+             * Adds a location to the pair, assuming that the left value is already present.
+             * @return Whether the location was successfully added.
+             */
+            public boolean add(QBlockLocation second) {
+                if (left != null && right == null) {
+                    right = second;
+                    return true;
+                }
+                return false;
+            }
+
+            /**
+             * Removes a location from the pair, either left or right.
+             * @return Whether the pair is empty and should be removed.
+             */
+            public boolean remove(QBlockLocation location) {
+                if (left == location) {
+                    if (right != null) {
+                        left = right;
+                        right = null;
+                    }
+                    else {
+                        left = null;
+                        return true;
+                    }
+                }
+                else if (right == location) {
+                    right = null;
+                }
+                return false;
+            }
+
+            /**
+             * @return The other location in the pair.
+             */
+            public QBlockLocation getOther(QBlockLocation location) {
+                if (left == location) {
+                    return right;
+                }
+                else if (right == location) {
+                    return left;
+                }
+                return null;
+            }
+
+            public boolean getOtherObserved(QBlockLocation location) {
+                QBlockLocation other = getOther(location);
+                if (other != null) {
+                    return other.observed;
+                }
+                return false;
+            }
+
+            /**
+             * @return Both locations in the pair.
+             */
+            public QBlockLocation[] getBoth() {
+                return new QBlockLocation[] {
+                        left,
+                        right
+                };
+            }
         }
     }
 }

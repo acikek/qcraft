@@ -64,12 +64,12 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
                 double betweenPitch = getPitch(between);
                 double pitchDiff = getPitchDifference(player.getPitch(), betweenPitch, yawDiff);
                 if (isObserved(pitchDiff, yawDiff, player.getPitch())) {
-                    if (!location.observed) {
+                    if (!location.observed && data.getOtherNotObserved(location)) {
                         data.observe(location, world, player);
                     }
                 }
-                else if (location.observed && location.canBeUnobserved(center)) {
-                    data.unobserve(location, world);
+                else if (location.observed && data.canBeUnobserved(location, center)) {
+                    data.unobserve(location, world, true);
                 }
             }
         }
