@@ -16,6 +16,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.*;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.PersistentState;
@@ -96,12 +97,11 @@ public class QBlockData extends PersistentState {
 
     public void fillFrequencies() {
         for (QBlockLocation location : locations) {
-            UUID uuid = location.getFrequencyUUID();
-            if (!frequencies.containsKey(uuid)) {
-                frequencies.put(uuid, new QBlockLocation.Pair(location));
+            if (!frequencies.containsKey(location.frequency)) {
+                frequencies.put(location.frequency, new QBlockLocation.Pair(location));
             }
-            else if (!frequencies.get(uuid).add(location)) {
-                QCraft.LOGGER.error("Failed to add " + location + " to frequency '" + uuid + "'");
+            else if (!frequencies.get(location.frequency).add(location)) {
+                QCraft.LOGGER.error("Failed to add " + location + " to frequency '" + location.frequency + "'");
             }
         }
     }
@@ -128,9 +128,8 @@ public class QBlockData extends PersistentState {
 
     public void getFrequency(QBlockLocation location, Consumer<QBlockLocation.Pair> consumer) {
         if (location.frequency != null) {
-            UUID uuid = location.getFrequencyUUID();
-            if (frequencies.containsKey(uuid)) {
-                consumer.accept(frequencies.get(uuid));
+            if (frequencies.containsKey(location.frequency)) {
+                consumer.accept(frequencies.get(location.frequency));
             }
             else {
                 QCraft.LOGGER.error(location + " has an unmatched frequency '" + location.frequency + "'");
@@ -153,7 +152,7 @@ public class QBlockData extends PersistentState {
         }
         NbtCompound stackNbt = stack.getOrCreateNbt();
         UUID frequency = stackNbt.containsUuid("frequency") ? stackNbt.getUuid("frequency") : null;
-        QBlockLocation result = new QBlockLocation(type, blockPos, List.of(faces), false, frequency != null ? frequency.toString() : null);
+        QBlockLocation result = new QBlockLocation(type, blockPos, List.of(faces), false, frequency);
         locations.add(result);
         if (frequency != null) {
             if (frequencies.containsKey(frequency)) {
@@ -192,7 +191,7 @@ public class QBlockData extends PersistentState {
             removed = location;
             getFrequency(location, pair -> {
                 if (pair.remove(location)) {
-                    frequencies.remove(location.getFrequencyUUID());
+                    frequencies.remove(location.frequency);
                 }
             });
             markDirty();
@@ -278,7 +277,7 @@ public class QBlockData extends PersistentState {
                         BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
                         Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces),
                         Codec.BOOL.fieldOf("observed").forGetter(l -> l.observed),
-                        Codec.STRING.fieldOf("frequency").forGetter(l -> l.frequency)
+                        DynamicSerializableUuid.CODEC.fieldOf("frequency").forGetter(l -> l.frequency)
                 )
                         .apply(instance, QBlockLocation::new)
         );
@@ -287,7 +286,7 @@ public class QBlockData extends PersistentState {
         public BlockPos pos;
         public List<String> faces;
         public boolean observed;
-        public String frequency;
+        public UUID frequency;
 
         /**
          * Constructs a {@link QBlockLocation}.<br>
@@ -298,16 +297,12 @@ public class QBlockData extends PersistentState {
          * @param observed Whether this location is currently observed.
          * @param frequency The String UUID of the location's entanglement frequency.
          */
-        public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces, boolean observed, String frequency) {
+        public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces, boolean observed, UUID frequency) {
             this.type = type;
             this.pos = pos;
             this.faces = faces;
             this.observed = observed;
             this.frequency = frequency;
-        }
-
-        public UUID getFrequencyUUID() {
-            return UUID.fromString(frequency);
         }
 
         public Block getFaceBlock(int index) {
@@ -330,7 +325,7 @@ public class QBlockData extends PersistentState {
             ItemStack stack = new ItemStack(type.resolveBlock());
             QBlockRecipe.applyFaces(stack, faces);
             if (frequency != null) {
-                stack.getOrCreateNbt().putUuid("frequency", UUID.fromString(frequency));
+                stack.getOrCreateNbt().putUuid("frequency", frequency);
             }
             return stack;
         }
