@@ -1,5 +1,6 @@
 package com.acikek.qcraft.world;
 
+import com.acikek.qcraft.item.Goggles;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -53,6 +54,9 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
             return;
         }
         for (PlayerEntity player : world.getPlayers()) {
+            if (Goggles.isWearingGoggles(player, Goggles.Type.ANTI_OBSERVATION)) {
+                return;
+            }
             List<QBlockData.QBlockLocation> localLocations = data.getLocalLocations(loadedLocations, player);
             if (localLocations.isEmpty()) {
                 return;

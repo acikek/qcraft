@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I I",
+    "GEG"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "E": {
+      "item": "qcraft:observation_essence"
+    }
+  },
+  "result": {
+    "item": "qcraft:anti_observation_goggles",
+    "count": 1
+  }
+}
