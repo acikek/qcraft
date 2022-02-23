@@ -1,6 +1,7 @@
 package com.acikek.qcraft;
 
 import com.acikek.qcraft.block.Blocks;
+import com.acikek.qcraft.block.QuantumOre;
 import com.acikek.qcraft.recipe.EntangledPairRecipe;
 import com.acikek.qcraft.recipe.QBlockRecipe;
 import com.acikek.qcraft.command.ClearQBlocksCommand;
@@ -33,6 +34,8 @@ public class QCraft implements ModInitializer {
         Items.registerAll();
         QBlockRecipe.register();
         EntangledPairRecipe.register();
+        QuantumOre.createFeatures();
+        QuantumOre.registerFeatures();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             new ClearQBlocksCommand().register(dispatcher);

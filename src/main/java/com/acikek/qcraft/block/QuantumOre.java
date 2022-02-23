@@ -1,5 +1,8 @@
 package com.acikek.qcraft.block;
 
+import com.acikek.qcraft.QCraft;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
@@ -12,12 +15,22 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.GenerationStep;
+import net.minecraft.world.gen.YOffset;
+import net.minecraft.world.gen.decorator.CountPlacementModifier;
+import net.minecraft.world.gen.decorator.HeightRangePlacementModifier;
+import net.minecraft.world.gen.decorator.SquarePlacementModifier;
+import net.minecraft.world.gen.feature.*;
 
 import java.util.Random;
 
@@ -35,6 +48,36 @@ public class QuantumOre extends RedstoneOreBlock {
             .copyOf(QUANTUM_ORE_SETTINGS)
             .strength(4.5f, 5.0f)
             .sounds(BlockSoundGroup.DEEPSLATE);
+
+    public static ConfiguredFeature<?, ?> QUANTUM_ORE_CONFIGURED_FEATURE;
+    public static ConfiguredFeature<?, ?> DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE;
+    public static PlacedFeature QUANTUM_ORE_PLACED_FEATURE;
+    public static PlacedFeature DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE;
+
+    public static void createFeatures() {
+        QUANTUM_ORE_CONFIGURED_FEATURE = Feature.ORE
+                .configure(new OreFeatureConfig(
+                        OreConfiguredFeatures.STONE_ORE_REPLACEABLES,
+                        Blocks.QUANTUM_ORE.getDefaultState(),
+                        8
+                ));
+        DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE = Feature.ORE
+                .configure(new OreFeatureConfig(
+                        OreConfiguredFeatures.DEEPSLATE_ORE_REPLACEABLES,
+                        Blocks.DEEPSLATE_QUANTUM_ORE.getDefaultState(),
+                        8
+                ));
+        QUANTUM_ORE_PLACED_FEATURE = QUANTUM_ORE_CONFIGURED_FEATURE.withPlacement(
+                CountPlacementModifier.of(4),
+                SquarePlacementModifier.of(),
+                HeightRangePlacementModifier.uniform(YOffset.getBottom(), YOffset.fixed(15))
+        );
+        DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE = QUANTUM_ORE_CONFIGURED_FEATURE.withPlacement(
+                CountPlacementModifier.of(4),
+                SquarePlacementModifier.of(),
+                HeightRangePlacementModifier.trapezoid(YOffset.aboveBottom(-32), YOffset.aboveBottom(32))
+        );
+    }
 
     // RGB(30, 199, 106)
     public static final int CONDENSED_GREEN = 2017130;
@@ -95,5 +138,20 @@ public class QuantumOre extends RedstoneOreBlock {
         if (state.get(LIT)) {
             spawnParticles(world, pos);
         }
+    }
+
+    public static void registerFeature(String id, ConfiguredFeature<?, ?> configuredFeature, PlacedFeature placedFeature) {
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new Identifier(QCraft.ID, id), configuredFeature);
+        Registry.register(BuiltinRegistries.PLACED_FEATURE, new Identifier(QCraft.ID, id), placedFeature);
+        BiomeModifications.addFeature(
+                BiomeSelectors.foundInOverworld(),
+                GenerationStep.Feature.UNDERGROUND_ORES,
+                RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier(QCraft.ID, id))
+        );
+    }
+
+    public static void registerFeatures() {
+        registerFeature("ore_quantum", QUANTUM_ORE_CONFIGURED_FEATURE, QUANTUM_ORE_PLACED_FEATURE);
+        registerFeature("ore_quantum_lower", DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE, DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE);
     }
 }
