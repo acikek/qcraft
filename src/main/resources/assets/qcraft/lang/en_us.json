@@ -5,6 +5,8 @@
   "block.qcraft.inert_quantum_block": "Inert Quantum Block",
   "block.qcraft.observer_dependent_block": "Observer-Dependent Block",
   "block.qcraft.quantum_block": "Quantum Block",
+  "block.qcraft.quantum_computer": "Quantum Computer",
+  "block.qcraft.automated_observer": "Automated Observer",
   "item.qcraft.quantum_dust": "Quantum Dust",
   "item.qcraft.observation_essence": "Essence of Observation",
   "item.qcraft.superposition_essence": "Essence of Superposition",

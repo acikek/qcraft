@@ -1,0 +1,18 @@
+{
+  "block.qcraft.quantum_ore": "Minério Quântico",
+  "block.qcraft.deepslate_quantum_ore": "Minério Quântico de Ardósia",
+  "block.qcraft.inert_observer_dependent_block": "Bloco Dependente-Observador Inerte",
+  "block.qcraft.inert_quantum_block": "Bloco Quântico Inerte",
+  "block.qcraft.observer_dependent_block": "Bloco Dependente-Observador",
+  "block.qcraft.quantum_block": "Bloco Quântico",
+  "block.qcraft.quantum_computer": "Computador Quântico",
+  "block.qcraft.automated_observer": "Observador Automático",
+  "item.qcraft.quantum_dust": "Pó Quântico",
+  "item.qcraft.observation_essence": "Essência da Observação",
+  "item.qcraft.superposition_essence": "Essência da Sobreposição",
+  "item.qcraft.entanglement_essence": "Essência do Entrelaçamento",
+  "item.qcraft.quantum_goggles": "Óculos Quânticos",
+  "item.qcraft.anti_observation_goggles": "Óculos de Anti-Observação",
+  "itemGroup.qcraft.main": "qCraft",
+  "command.qcraft.clear_qblocks.success": "%d qBlock(s) do mundo atual removidos"
+}
