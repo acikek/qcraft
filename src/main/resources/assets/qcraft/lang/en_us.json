@@ -9,6 +9,8 @@
   "item.qcraft.observation_essence": "Essence of Observation",
   "item.qcraft.superposition_essence": "Essence of Superposition",
   "item.qcraft.entanglement_essence": "Essence of Entanglement",
+  "item.qcraft.quantum_goggles": "Quantum Goggles",
+  "item.qcraft.anti_observation_goggles": "Anti-Observation Goggles",
   "itemGroup.qcraft.main": "qCraft",
   "command.qcraft.clear_qblocks.success": "Removed %d qBlock(s) from the current world"
 }

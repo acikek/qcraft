@@ -1,0 +1,16 @@
+{
+  "block.qcraft.quantum_ore": "Mena Cuántica",
+  "block.qcraft.deepslate_quantum_ore": "Mena Cuántica de Pizarra Profunda",
+  "block.qcraft.inert_observer_dependent_block": "Inert Observer-Dependent Block",
+  "block.qcraft.inert_quantum_block": "Inert Quantum Block",
+  "block.qcraft.observer_dependent_block": "Bloque Dependiente del Observador",
+  "block.qcraft.quantum_block": "Bloque Cuántico",
+  "item.qcraft.quantum_dust": "Polvo Cuántico",
+  "item.qcraft.observation_essence": "Esencia de Observación",
+  "item.qcraft.superposition_essence": "Esencia de Superposición",
+  "item.qcraft.entanglement_essence": "Esencia de Enredo",
+  "item.qcraft.quantum_goggles": "Gafas Cuánticas",
+  "item.qcraft.anti_observation_goggles": "Gafas de Anti-Observación",
+  "itemGroup.qcraft.main": "qCraft",
+  "command.qcraft.clear_qblocks.success": "Eliminado %d qBlock(s) del mundo actual"
+}
