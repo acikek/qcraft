@@ -1,4 +1,4 @@
-package com.acikek.qcraft.commands;
+package com.acikek.qcraft.command;
 
 import com.acikek.qcraft.world.QBlockData;
 import com.mojang.brigadier.Command;

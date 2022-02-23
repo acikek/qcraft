@@ -1,6 +1,6 @@
-package com.acikek.qcraft.blocks.qblock;
+package com.acikek.qcraft.block.qblock;
 
-import com.acikek.qcraft.blocks.Blocks;
+import com.acikek.qcraft.block.Blocks;
 import com.acikek.qcraft.world.QBlockData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;

@@ -1,4 +1,4 @@
-package com.acikek.qcraft.blocks;
+package com.acikek.qcraft.block;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;

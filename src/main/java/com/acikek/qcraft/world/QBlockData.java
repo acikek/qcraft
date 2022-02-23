@@ -1,10 +1,10 @@
 package com.acikek.qcraft.world;
 
 import com.acikek.qcraft.QCraft;
-import com.acikek.qcraft.blocks.qblock.InertQBlock;
-import com.acikek.qcraft.blocks.qblock.QBlock;
-import com.acikek.qcraft.blocks.qblock.QBlockItem;
-import com.acikek.qcraft.blocks.recipe.QBlockRecipe;
+import com.acikek.qcraft.block.qblock.InertQBlock;
+import com.acikek.qcraft.block.qblock.QBlock;
+import com.acikek.qcraft.block.qblock.QBlockItem;
+import com.acikek.qcraft.recipe.QBlockRecipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
@@ -222,7 +222,6 @@ public class QBlockData extends PersistentState {
         observe(location, world, face);
         getFrequency(location, pair -> {
             QBlockLocation other = pair.getOther(location);
-            System.out.println(other);
             if (other != null) {
                 setFaceBlock(world, other, face);
             }

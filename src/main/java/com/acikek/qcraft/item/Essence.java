@@ -1,4 +1,4 @@
-package com.acikek.qcraft.items;
+package com.acikek.qcraft.item;
 
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;

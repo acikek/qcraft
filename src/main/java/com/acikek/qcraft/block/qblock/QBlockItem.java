@@ -1,5 +1,6 @@
-package com.acikek.qcraft.blocks.qblock;
+package com.acikek.qcraft.block.qblock;
 
+import com.acikek.qcraft.item.Goggles;
 import com.acikek.qcraft.world.QBlockData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -16,22 +17,26 @@ public class QBlockItem extends BlockItem {
         super(block, settings);
     }
 
+    public QBlock getQBlock() {
+        return (QBlock) getBlock();
+    }
+
     @Override
     protected boolean place(ItemPlacementContext context, BlockState state) {
-        boolean result = super.place(context, state);
+        BlockState inertState = getQBlock().type.resolveInert().getDefaultState();
+        boolean result = super.place(context, inertState);
         if (context.getWorld().isClient()) {
             return result;
         }
         if (result) {
             QBlockData data = QBlockData.get(context.getWorld(), true);
-            QBlockData.QBlockLocation added = data.addBlock(((QBlock) getBlock()).type, context.getBlockPos(), context.getStack());
+            QBlockData.QBlockLocation added = data.addBlock(getQBlock().type, context.getBlockPos(), context.getStack());
             if (added == null) {
                 return false;
             }
-            if (context.getPlayer() != null) {
+            if (context.getPlayer() != null && !Goggles.isWearingGoggles(context.getPlayer(), Goggles.Type.ANTI_OBSERVATION)) {
                 data.observe(added, context.getWorld(), context.getPlayer());
             }
-            System.out.println(data.frequencies);
             return true;
         }
         return false;

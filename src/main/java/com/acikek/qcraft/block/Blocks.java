@@ -1,10 +1,10 @@
-package com.acikek.qcraft.blocks;
+package com.acikek.qcraft.block;
 
 import com.acikek.qcraft.QCraft;
-import com.acikek.qcraft.blocks.qblock.InertQBlock;
-import com.acikek.qcraft.blocks.qblock.QBlock;
-import com.acikek.qcraft.blocks.qblock.QBlockItem;
-import com.acikek.qcraft.items.Items;
+import com.acikek.qcraft.block.qblock.InertQBlock;
+import com.acikek.qcraft.block.qblock.QBlock;
+import com.acikek.qcraft.block.qblock.QBlockItem;
+import com.acikek.qcraft.item.Items;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;

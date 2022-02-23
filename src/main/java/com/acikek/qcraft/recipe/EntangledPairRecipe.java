@@ -1,8 +1,8 @@
-package com.acikek.qcraft.blocks.recipe;
+package com.acikek.qcraft.recipe;
 
 import com.acikek.qcraft.QCraft;
-import com.acikek.qcraft.blocks.qblock.QBlockItem;
-import com.acikek.qcraft.items.Essence;
+import com.acikek.qcraft.block.qblock.QBlockItem;
+import com.acikek.qcraft.item.Essence;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;

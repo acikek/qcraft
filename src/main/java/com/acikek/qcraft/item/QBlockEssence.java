@@ -1,7 +1,7 @@
-package com.acikek.qcraft.items;
+package com.acikek.qcraft.item;
 
-import com.acikek.qcraft.blocks.Blocks;
-import com.acikek.qcraft.blocks.qblock.QBlock;
+import com.acikek.qcraft.block.Blocks;
+import com.acikek.qcraft.block.qblock.QBlock;
 
 public class QBlockEssence extends Essence {
 
