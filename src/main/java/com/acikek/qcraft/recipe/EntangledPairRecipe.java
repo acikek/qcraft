@@ -54,6 +54,6 @@ public class EntangledPairRecipe extends SpecialCraftingRecipe {
     }
 
     public static void register() {
-        SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(QCraft.ID, "crafting_special_entangled_pair"), new SpecialRecipeSerializer<>(EntangledPairRecipe::new));
+        SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, QCraft.id("crafting_special_entangled_pair"), new SpecialRecipeSerializer<>(EntangledPairRecipe::new));
     }
 }

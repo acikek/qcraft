@@ -8,7 +8,6 @@ import com.acikek.qcraft.item.Items;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class Blocks {
     }
 
     public static void register(String name, Block block) {
-        Registry.register(Registry.BLOCK, new Identifier(QCraft.ID, name), block);
+        Registry.register(Registry.BLOCK, QCraft.id(name), block);
         BlockItem blockItem = block instanceof QBlock qBlock
                 ? new QBlockItem(qBlock, new FabricItemSettings().group(QCraft.ITEM_GROUP))
                 : new BlockItem(block, new FabricItemSettings().group(QCraft.ITEM_GROUP));

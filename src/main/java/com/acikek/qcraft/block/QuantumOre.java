@@ -140,13 +140,14 @@ public class QuantumOre extends RedstoneOreBlock {
         }
     }
 
-    public static void registerFeature(String id, ConfiguredFeature<?, ?> configuredFeature, PlacedFeature placedFeature) {
-        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new Identifier(QCraft.ID, id), configuredFeature);
-        Registry.register(BuiltinRegistries.PLACED_FEATURE, new Identifier(QCraft.ID, id), placedFeature);
+    public static void registerFeature(String name, ConfiguredFeature<?, ?> configuredFeature, PlacedFeature placedFeature) {
+        Identifier id = QCraft.id(name);
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, id, configuredFeature);
+        Registry.register(BuiltinRegistries.PLACED_FEATURE, id, placedFeature);
         BiomeModifications.addFeature(
                 BiomeSelectors.foundInOverworld(),
                 GenerationStep.Feature.UNDERGROUND_ORES,
-                RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier(QCraft.ID, id))
+                RegistryKey.of(Registry.PLACED_FEATURE_KEY, id)
         );
     }
 

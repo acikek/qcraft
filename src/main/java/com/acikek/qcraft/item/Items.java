@@ -3,7 +3,6 @@ package com.acikek.qcraft.item;
 import com.acikek.qcraft.QCraft;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class Items {
     }
 
     public static void register(String name, Item item) {
-        Registry.register(Registry.ITEM, new Identifier(QCraft.ID, name), item);
+        Registry.register(Registry.ITEM, QCraft.id(name), item);
     }
 
     public static void registerAll() {

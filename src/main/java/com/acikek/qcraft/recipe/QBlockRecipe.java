@@ -115,6 +115,6 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
     }
 
     public static void register() {
-        SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(QCraft.ID, "crafting_special_qblock"), new SpecialRecipeSerializer<>(QBlockRecipe::new));
+        SERIALIZER = Registry.register(Registry.RECIPE_SERIALIZER, QCraft.id("crafting_special_qblock"), new SpecialRecipeSerializer<>(QBlockRecipe::new));
     }
 }
