@@ -4,7 +4,7 @@
     "particle": "qcraft:block/automated_observer",
     "slab": "block/smooth_stone",
     "top": "qcraft:block/automated_observer",
-    "unlit": "block/redstone_torch_off"
+    "unlit": "qcraft:block/quantum_torch_off"
   },
   "elements": [
     {

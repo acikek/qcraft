@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_torch",
+  "textures": {
+    "torch": "qcraft:block/quantum_torch_off"
+  }
+}
