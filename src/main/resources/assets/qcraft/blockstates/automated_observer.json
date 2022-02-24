@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,powered=false": {
+      "model": "qcraft:block/automated_observer",
+      "y": 270
+    },
+    "facing=north,powered=false": {
+      "model": "qcraft:block/automated_observer",
+      "y": 180
+    },
+    "facing=south,powered=false": {
+      "model": "qcraft:block/automated_observer"
+    },
+    "facing=west,powered=false": {
+      "model": "qcraft:block/automated_observer",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "qcraft:block/automated_observer_on",
+      "y": 270
+    },
+    "facing=north,powered=true": {
+      "model": "qcraft:block/automated_observer_on",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "qcraft:block/automated_observer_on"
+    },
+    "facing=west,powered=true": {
+      "model": "qcraft:block/automated_observer_on",
+      "y": 90
+    }
+  }
+}

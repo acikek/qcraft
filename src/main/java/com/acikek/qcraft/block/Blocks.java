@@ -21,6 +21,7 @@ public class Blocks {
     public static final InertQBlock INERT_QUANTUM_BLOCK = new InertQBlock();
     public static final QBlock OBSERVER_DEPENDENT_BLOCK = new QBlock(QBlock.Type.OBSERVER_DEPENDENT);
     public static final QBlock QUANTUM_BLOCK = new QBlock(QBlock.Type.QUANTUM);
+    public static final AutomatedObserver AUTOMATED_OBSERVER = new AutomatedObserver();
 
     public static Map<String, Block> BLOCKS = new HashMap<>();
 
@@ -31,6 +32,7 @@ public class Blocks {
         BLOCKS.put("inert_quantum_block", INERT_QUANTUM_BLOCK);
         BLOCKS.put("observer_dependent_block", OBSERVER_DEPENDENT_BLOCK);
         BLOCKS.put("quantum_block", QUANTUM_BLOCK);
+        BLOCKS.put("automated_observer", AUTOMATED_OBSERVER);
     }
 
     public static void register(String name, Block block) {
