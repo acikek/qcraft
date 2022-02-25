@@ -14,5 +14,5 @@
   "item.qcraft.quantum_goggles": "Gafas Cuánticas",
   "item.qcraft.anti_observation_goggles": "Gafas de Anti-Observación",
   "itemGroup.qcraft.main": "qCraft",
-  "command.qcraft.clear_qblocks.success": "Eliminado %d qBlock(s) del mundo actual"
+  "command.qcraft.clear_qblocks.success": "%d qBlock(s) del mundo actual removidos"
 }
