@@ -36,7 +36,7 @@ public class Goggles extends ArmorItem {
 
         @Override
         public int getProtectionAmount(EquipmentSlot slot) {
-            return 0;
+            return 1;
         }
 
         @Override
