@@ -97,12 +97,14 @@ public class QBlockData extends PersistentState {
 
     public void fillFrequencies() {
         for (QBlockLocation location : locations) {
-            if (!frequencies.containsKey(location.frequency)) {
-                frequencies.put(location.frequency, new QBlockLocation.Pair(location));
-            }
-            else if (!frequencies.get(location.frequency).add(location)) {
-                QCraft.LOGGER.error("Failed to add " + location + " to frequency '" + location.frequency + "'");
-            }
+            location.frequency.ifPresent(frequency -> {
+                if (!frequencies.containsKey(frequency)) {
+                    frequencies.put(frequency, new QBlockLocation.Pair(location));
+                }
+                else if (!frequencies.get(frequency).add(location)) {
+                    QCraft.LOGGER.error("Failed to add " + location + " to frequency '" + frequency + "'");
+                }
+            });
         }
     }
 
@@ -127,15 +129,15 @@ public class QBlockData extends PersistentState {
     }
 
     public void getFrequency(QBlockLocation location, Consumer<QBlockLocation.Pair> consumer) {
-        if (location.frequency != null) {
-            if (frequencies.containsKey(location.frequency)) {
-                consumer.accept(frequencies.get(location.frequency));
+        location.frequency.ifPresent(frequency -> {
+            if (frequencies.containsKey(frequency)) {
+                consumer.accept(frequencies.get(frequency));
             }
             else {
-                QCraft.LOGGER.error(location + " has an unmatched frequency '" + location.frequency + "'");
-                location.frequency = null;
+                QCraft.LOGGER.error(location + " has an unmatched frequency '" + frequency + "'");
+                location.frequency = Optional.empty();
             }
-        }
+        });
     }
 
     /**
@@ -151,17 +153,17 @@ public class QBlockData extends PersistentState {
             return null;
         }
         NbtCompound stackNbt = stack.getOrCreateNbt();
-        UUID frequency = stackNbt.containsUuid("frequency") ? stackNbt.getUuid("frequency") : null;
+        Optional<UUID> frequency = stackNbt.containsUuid("frequency") ? Optional.of(stackNbt.getUuid("frequency")) : Optional.empty();
         QBlockLocation result = new QBlockLocation(type, blockPos, List.of(faces), false, frequency);
         locations.add(result);
-        if (frequency != null) {
-            if (frequencies.containsKey(frequency)) {
-                frequencies.get(frequency).add(result);
+        frequency.ifPresent(f -> {
+            if (frequencies.containsKey(f)) {
+                frequencies.get(f).add(result);
             }
             else {
-                frequencies.put(frequency, new QBlockLocation.Pair(result));
+                frequencies.put(f, new QBlockLocation.Pair(result));
             }
-        }
+        });
         markDirty();
         return result;
     }
@@ -190,8 +192,8 @@ public class QBlockData extends PersistentState {
         if (locations.remove(location)) {
             removed = location;
             getFrequency(location, pair -> {
-                if (pair.remove(location)) {
-                    frequencies.remove(location.frequency);
+                if (pair.remove(location) && location.frequency.isPresent()) {
+                    frequencies.remove(location.frequency.get());
                 }
             });
             markDirty();
@@ -272,6 +274,7 @@ public class QBlockData extends PersistentState {
     /**
      * Represents a placed qBlock in the world.
      */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class QBlockLocation {
 
         public static Codec<QBlockLocation> CODEC = RecordCodecBuilder.create(instance ->
@@ -280,7 +283,7 @@ public class QBlockData extends PersistentState {
                         BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
                         Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces),
                         Codec.BOOL.fieldOf("observed").forGetter(l -> l.observed),
-                        DynamicSerializableUuid.CODEC.fieldOf("frequency").forGetter(l -> l.frequency)
+                        DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency)
                 )
                         .apply(instance, QBlockLocation::new)
         );
@@ -289,7 +292,7 @@ public class QBlockData extends PersistentState {
         public BlockPos pos;
         public List<String> faces;
         public boolean observed;
-        public UUID frequency;
+        public Optional<UUID> frequency;
 
         /**
          * Constructs a {@link QBlockLocation}.<br>
@@ -300,7 +303,7 @@ public class QBlockData extends PersistentState {
          * @param observed Whether this location is currently observed.
          * @param frequency The String UUID of the location's entanglement frequency.
          */
-        public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces, boolean observed, UUID frequency) {
+        public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces, boolean observed, Optional<UUID> frequency) {
             this.type = type;
             this.pos = pos;
             this.faces = faces;
@@ -327,9 +330,7 @@ public class QBlockData extends PersistentState {
         public ItemStack getItemStack() {
             ItemStack stack = new ItemStack(type.resolveBlock());
             QBlockRecipe.applyFaces(stack, faces);
-            if (frequency != null) {
-                stack.getOrCreateNbt().putUuid("frequency", frequency);
-            }
+            frequency.ifPresent(f -> stack.getOrCreateNbt().putUuid("frequency", f));
             return stack;
         }
 
