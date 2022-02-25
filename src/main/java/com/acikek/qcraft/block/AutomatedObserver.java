@@ -1,10 +1,10 @@
 package com.acikek.qcraft.block;
 
+import com.acikek.qcraft.block.qblock.QBlock;
+import com.acikek.qcraft.world.QBlockData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.AbstractRedstoneGateBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
+import net.minecraft.block.*;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
@@ -24,9 +24,32 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
         super(DEFAULT_SETTINGS);
         setDefaultState(
                 getStateManager().getDefaultState()
-                    .with(FACING, Direction.SOUTH)
+                    .with(FACING, Direction.NORTH)
                     .with(POWERED, false)
         );
+    }
+
+    @Override
+    protected boolean hasPower(World world, BlockPos pos, BlockState state) {
+        return world.isReceivingRedstonePower(pos);
+    }
+
+    @Override
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        super.scheduledTick(state, world, pos, random);
+        if (!world.isClient()) {
+            QBlockData data = QBlockData.get(world, true);
+            data.getBlock(pos.offset(state.get(FACING).getOpposite())).ifPresent(location -> {
+                if (hasPower(world, pos, state)) {
+                    if (!location.observed && data.getOtherNotObserved(location)) {
+                        data.observe(location, world, QBlock.Axis.from(state.get(FACING).getAxis()));
+                    }
+                }
+                else if (location.observed) {
+                    data.unobserve(location, world, true);
+                }
+            });
+        }
     }
 
     @Override

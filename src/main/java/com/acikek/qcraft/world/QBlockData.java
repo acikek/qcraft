@@ -228,6 +228,10 @@ public class QBlockData extends PersistentState {
         });
     }
 
+    public void observe(QBlockLocation location, World world, QBlock.Axis axis) {
+        observe(location, world, axis.getRandomFace(world.random));
+    }
+
     public void observe(QBlockLocation location, World world, QBlock.Face face) {
         setFaceBlock(world, location, face);
         location.observed = true;

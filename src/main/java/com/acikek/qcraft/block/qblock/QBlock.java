@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Random;
@@ -95,6 +96,14 @@ public class QBlock extends InertQBlock {
                 case X -> value ? Face.EAST : Face.WEST;
                 case Y -> value ? Face.UP : Face.DOWN;
                 case Z -> value ? Face.SOUTH : Face.NORTH;
+            };
+        }
+
+        public static Axis from(Direction.Axis axis) {
+            return switch (axis) {
+                case X -> X;
+                case Y -> Y;
+                case Z -> Z;
             };
         }
     }
