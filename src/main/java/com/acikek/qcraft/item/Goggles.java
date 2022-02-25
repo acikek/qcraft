@@ -14,7 +14,7 @@ public class Goggles extends ArmorItem {
         QUANTUM("quantum"),
         ANTI_OBSERVATION("anti_observation");
 
-        public String id;
+        public final String id;
 
         Type(String id) {
             this.id = id;
@@ -23,7 +23,7 @@ public class Goggles extends ArmorItem {
 
     public static class Material implements ArmorMaterial {
 
-        public Type type;
+        public final Type type;
 
         public Material(Type type) {
             this.type = type;
@@ -70,7 +70,7 @@ public class Goggles extends ArmorItem {
         }
     }
 
-    public Type type;
+    public final Type type;
 
     public Goggles(Type type) {
         super(new Material(type), EquipmentSlot.HEAD, Items.defaultSettings());

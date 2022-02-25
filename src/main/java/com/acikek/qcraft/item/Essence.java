@@ -11,7 +11,7 @@ public class Essence extends Item {
         ENTANGLEMENT
     }
 
-    public Type essenceType;
+    public final Type essenceType;
 
     public Essence(Settings settings, Type essenceType) {
         super(settings);

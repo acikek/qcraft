@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 
 public class QBlockData extends PersistentState {
 
-    public static Codec<List<QBlockLocation>> CODEC = Codec.list(QBlockLocation.CODEC);
+    public static final Codec<List<QBlockLocation>> CODEC = Codec.list(QBlockLocation.CODEC);
     public static final String DATA = "qblocklocations";
     public static final String KEY = QCraft.ID + "_" + DATA;
 
-    public List<QBlockLocation> locations = new ArrayList<>();
-    public Map<UUID, QBlockLocation.Pair> frequencies = new HashMap<>();
+    public final List<QBlockLocation> locations = new ArrayList<>();
+    public final Map<UUID, QBlockLocation.Pair> frequencies = new HashMap<>();
     public boolean settingBlock = false;
     public QBlockLocation removed = null;
 
@@ -43,6 +43,7 @@ public class QBlockData extends PersistentState {
 
     /**
      * Gets or creates {@link QBlockData} state from the specified world.
+     *
      * @param world The {@link ServerWorld} to get the state from.
      * @return The {@link QBlockData} instance.
      */
@@ -142,6 +143,7 @@ public class QBlockData extends PersistentState {
 
     /**
      * Constructs and adds a {@link QBlockLocation} to this state's locations.
+     *
      * @return The added location.
      */
     public QBlockLocation addBlock(QBlock.Type type, BlockPos blockPos, ItemStack stack) {
@@ -153,7 +155,9 @@ public class QBlockData extends PersistentState {
             return null;
         }
         NbtCompound stackNbt = stack.getOrCreateNbt();
-        Optional<UUID> frequency = stackNbt.containsUuid("frequency") ? Optional.of(stackNbt.getUuid("frequency")) : Optional.empty();
+        Optional<UUID> frequency = stackNbt.containsUuid("frequency")
+                ? Optional.of(stackNbt.getUuid("frequency"))
+                : Optional.empty();
         QBlockLocation result = new QBlockLocation(type, blockPos, List.of(faces), false, frequency);
         locations.add(result);
         frequency.ifPresent(f -> {
@@ -186,6 +190,7 @@ public class QBlockData extends PersistentState {
 
     /**
      * Removes the specified block location.
+     *
      * @see QBlockData#removeBlock(BlockPos)
      */
     public void removeBlock(QBlockLocation location) {
@@ -277,30 +282,31 @@ public class QBlockData extends PersistentState {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class QBlockLocation {
 
-        public static Codec<QBlockLocation> CODEC = RecordCodecBuilder.create(instance ->
+        public static final Codec<QBlockLocation> CODEC = RecordCodecBuilder.create(instance ->
                 instance.group(
-                        QBlock.Type.CODEC.fieldOf("type").forGetter(l -> l.type),
-                        BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
-                        Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces),
-                        Codec.BOOL.fieldOf("observed").forGetter(l -> l.observed),
-                        DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency)
-                )
+                                QBlock.Type.CODEC.fieldOf("type").forGetter(l -> l.type),
+                                BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
+                                Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces),
+                                Codec.BOOL.fieldOf("observed").forGetter(l -> l.observed),
+                                DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency)
+                        )
                         .apply(instance, QBlockLocation::new)
         );
 
-        public QBlock.Type type;
-        public BlockPos pos;
-        public List<String> faces;
+        public final QBlock.Type type;
+        public final BlockPos pos;
+        public final List<String> faces;
         public boolean observed;
         public Optional<UUID> frequency;
 
         /**
          * Constructs a {@link QBlockLocation}.<br>
          * To add a location to a {@link QBlockData} instance, see {@link QBlockData#addBlock(QBlock.Type, BlockPos, ItemStack)}.
-         * @param type The qBlock's type. This determines its observation behavior.
-         * @param pos The block position of the location.
-         * @param faces The block face IDs. To read these from an item, see {@link QBlockItem#getFaces(ItemStack)}.
-         * @param observed Whether this location is currently observed.
+         *
+         * @param type      The qBlock's type. This determines its observation behavior.
+         * @param pos       The block position of the location.
+         * @param faces     The block face IDs. To read these from an item, see {@link QBlockItem#getFaces(ItemStack)}.
+         * @param observed  Whether this location is currently observed.
          * @param frequency The String UUID of the location's entanglement frequency.
          */
         public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces, boolean observed, Optional<UUID> frequency) {
@@ -403,6 +409,7 @@ public class QBlockData extends PersistentState {
 
             /**
              * Adds a location to the pair, assuming that the left value is already present.
+             *
              * @return Whether the location was successfully added.
              */
             public boolean add(QBlockLocation second) {
@@ -415,6 +422,7 @@ public class QBlockData extends PersistentState {
 
             /**
              * Removes a location from the pair, either left or right.
+             *
              * @return Whether the pair is empty and should be removed.
              */
             public boolean remove(QBlockLocation location) {

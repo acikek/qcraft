@@ -18,13 +18,13 @@ public class QBlock extends InertQBlock {
         OBSERVER_DEPENDENT("observer_dependent_block"),
         QUANTUM("quantum_block");
 
-        public static Codec<Type> CODEC = Codec.STRING.comapFlatMap(Type::validate, Type::getId);
+        public static final Codec<Type> CODEC = Codec.STRING.comapFlatMap(Type::validate, Type::getId);
 
         public static DataResult<Type> validate(String id) {
             return switch (id) {
                 case "observer_dependent_block" -> DataResult.success(Type.OBSERVER_DEPENDENT);
                 case "quantum_block" -> DataResult.success(Type.QUANTUM);
-                default -> DataResult.error("Not a valid QBlock type: " + id);
+                default -> DataResult.error("Not a valid qBlock type: " + id);
             };
         }
 
@@ -49,7 +49,7 @@ public class QBlock extends InertQBlock {
             };
         }
 
-        public String id;
+        public final String id;
 
         Type(String id) {
             this.id = id;
@@ -69,17 +69,17 @@ public class QBlock extends InertQBlock {
         DOWN(6, 4),
         SOUTH(7, 5);
 
-        public int slot;
-        public int index;
+        public final int slot;
+        public final int index;
 
         Face(int slot, int index) {
             this.slot = slot;
             this.index = index;
         }
 
-        public static int CENTER = 4;
+        public static final int CENTER = 4;
 
-        public static int[] EMPTY_SLOTS = {
+        public static final int[] EMPTY_SLOTS = {
                 2, 8
         };
     }
@@ -108,7 +108,7 @@ public class QBlock extends InertQBlock {
         }
     }
 
-    public Type type;
+    public final Type type;
 
     public QBlock(Type type) {
         super();

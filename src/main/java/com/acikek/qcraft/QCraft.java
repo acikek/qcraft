@@ -21,11 +21,11 @@ public class QCraft implements ModInitializer {
 
     public static final String ID = "qcraft";
 
-    public static ItemGroup ITEM_GROUP = FabricItemGroupBuilder.create(id("main"))
+    public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.create(id("main"))
             .icon(() -> new ItemStack(Items.QUANTUM_DUST))
             .build();
 
-    public static Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public static Identifier id(String name) {
         return new Identifier(QCraft.ID, name);
@@ -39,9 +39,7 @@ public class QCraft implements ModInitializer {
         EntangledPairRecipe.register();
         QuantumOre.createFeatures();
         QuantumOre.registerFeatures();
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-            new ClearQBlocksCommand().register(dispatcher);
-        });
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> new ClearQBlocksCommand().register(dispatcher));
         ServerTickEvents.START_WORLD_TICK.register(new QBlockTickListener());
     }
 }

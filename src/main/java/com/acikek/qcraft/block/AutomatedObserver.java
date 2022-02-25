@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class AutomatedObserver extends AbstractRedstoneGateBlock {
 
-    public static Settings DEFAULT_SETTINGS = FabricBlockSettings.of(Material.DECORATION)
+    public static final Settings DEFAULT_SETTINGS = FabricBlockSettings.of(Material.DECORATION)
             .breakInstantly()
             .sounds(BlockSoundGroup.METAL);
 

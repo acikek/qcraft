@@ -23,7 +23,7 @@ public class Blocks {
     public static final QBlock QUANTUM_BLOCK = new QBlock(QBlock.Type.QUANTUM);
     public static final AutomatedObserver AUTOMATED_OBSERVER = new AutomatedObserver();
 
-    public static Map<String, Block> BLOCKS = new HashMap<>();
+    public static final Map<String, Block> BLOCKS = new HashMap<>();
 
     static {
         BLOCKS.put("quantum_ore", QUANTUM_ORE);

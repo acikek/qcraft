@@ -12,8 +12,8 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
 
     public QBlockData data;
 
-    public static double PITCH_THRESHOLD = 60.0;
-    public static double YAW_THRESHOLD = 80.0;
+    public static final double PITCH_THRESHOLD = 60.0;
+    public static final double YAW_THRESHOLD = 80.0;
 
     // These methods took 4 days to write.
     // Massive thanks to sssubtlety, nHail, and dirib!
