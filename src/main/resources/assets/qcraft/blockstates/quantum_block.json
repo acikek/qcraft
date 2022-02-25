@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "qcraft:block/quantum_block" }
+  }
+}
