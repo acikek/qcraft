@@ -2,6 +2,7 @@ package com.acikek.qcraft.block.qblock;
 
 import com.acikek.qcraft.item.Goggles;
 import com.acikek.qcraft.world.QBlockData;
+import com.acikek.qcraft.world.QBlockLocation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
@@ -30,7 +31,7 @@ public class QBlockItem extends BlockItem {
         }
         if (result) {
             QBlockData data = QBlockData.get(context.getWorld(), true);
-            QBlockData.QBlockLocation added = data.addBlock(getQBlock().type, context.getBlockPos(), context.getStack());
+            QBlockLocation added = data.addBlock(getQBlock().type, context.getBlockPos(), context.getStack());
             if (added == null) {
                 return false;
             }

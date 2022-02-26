@@ -49,7 +49,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
         if (data.locations.isEmpty()) {
             return;
         }
-        List<QBlockData.QBlockLocation> loadedLocations = data.getLoadedLocations(world);
+        List<QBlockLocation> loadedLocations = data.getLoadedLocations(world);
         if (loadedLocations.isEmpty()) {
             return;
         }
@@ -57,12 +57,12 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
             if (Goggles.isWearingGoggles(player, Goggles.Type.ANTI_OBSERVATION)) {
                 return;
             }
-            List<QBlockData.QBlockLocation> localLocations = data.getLocalLocations(loadedLocations, player);
+            List<QBlockLocation> localLocations = data.getLocalLocations(loadedLocations, player);
             if (localLocations.isEmpty()) {
                 return;
             }
             Vec3d center = player.getPos().lerp(player.getEyePos(), 0.5);
-            for (QBlockData.QBlockLocation location : localLocations) {
+            for (QBlockLocation location : localLocations) {
                 Vec3d between = location.getBetween(player.getEyePos());
                 double yawDiff = getYawDifference(player, between);
                 double betweenPitch = getPitch(between);

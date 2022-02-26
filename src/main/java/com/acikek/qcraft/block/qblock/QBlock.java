@@ -1,7 +1,7 @@
 package com.acikek.qcraft.block.qblock;
 
 import com.acikek.qcraft.block.Blocks;
-import com.acikek.qcraft.world.QBlockData;
+import com.acikek.qcraft.world.QBlockLocation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.block.Block;
@@ -42,7 +42,7 @@ public class QBlock extends InertQBlock {
             };
         }
 
-        public Face pickFace(QBlockData.QBlockLocation location, Vec3d dists, Random random) {
+        public Face pickFace(QBlockLocation location, Vec3d dists, Random random) {
             return switch (this) {
                 case OBSERVER_DEPENDENT -> location.getClosestFace(dists);
                 case QUANTUM -> location.getClosestAxis(dists).getRandomFace(random);
