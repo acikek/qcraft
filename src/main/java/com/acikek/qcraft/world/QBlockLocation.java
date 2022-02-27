@@ -9,12 +9,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -117,6 +119,11 @@ public class QBlockLocation extends Frequential {
         };
     }
 
+    public QBlock.Face pickFace(PlayerEntity player, World world) {
+        Vec3d dists = getBetween(player.getEyePos());
+        return type.pickFace(this, dists, world.random);
+    }
+
     /**
      * @return Whether the specified block state is impossible given the valid block faces.
      */
@@ -138,10 +145,6 @@ public class QBlockLocation extends Frequential {
      * Represents a pair of entangled qBlocks.
      */
     public static class Pair extends com.acikek.qcraft.world.frequency.Pair<QBlockLocation> {
-
-        public static final Codec<Pair> CODEC = RecordCodecBuilder.create(instance ->
-                generateCodec(instance, QBlockLocation.CODEC).apply(instance, Pair::new)
-        );
 
         public Pair(QBlockLocation first) {
             super(first);

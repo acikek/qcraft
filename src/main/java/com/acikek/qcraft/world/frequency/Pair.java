@@ -1,9 +1,5 @@
 package com.acikek.qcraft.world.frequency;
 
-import com.mojang.datafixers.Products;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,12 +73,5 @@ public class Pair<T extends Frequential> {
         both.add(left);
         both.add(right);
         return both;
-    }
-
-    public static <T extends Frequential, C extends Pair<T>> Products.P2<RecordCodecBuilder.Mu<C>, T, T> generateCodec(RecordCodecBuilder.Instance<C> instance, Codec<T> codec) {
-        return instance.group(
-                codec.fieldOf("left").forGetter(p -> p.left),
-                codec.fieldOf("right").forGetter(p -> p.right)
-        );
     }
 }

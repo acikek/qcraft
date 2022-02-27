@@ -166,9 +166,12 @@ public class QBlockData extends PersistentState {
         setBlockState(world, location.pos, state);
     }
 
+    public void pseudoObserve(QBlockLocation location, World world, PlayerEntity player) {
+        setFaceBlock(world, location, location.pickFace(player, world));
+    }
+
     public void observe(QBlockLocation location, World world, PlayerEntity player) {
-        Vec3d dists = location.getBetween(player.getEyePos());
-        QBlock.Face face = location.type.pickFace(location, dists, world.random);
+        QBlock.Face face = location.pickFace(player, world);
         observe(location, world, face);
         qBlockFrequencies.ifPresent(location, pair -> {
             QBlockLocation other = pair.getOther(location);

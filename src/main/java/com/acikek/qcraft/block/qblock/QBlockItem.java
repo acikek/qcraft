@@ -36,7 +36,7 @@ public class QBlockItem extends BlockItem {
                 return false;
             }
             if (context.getPlayer() != null && !Goggles.isWearingGoggles(context.getPlayer(), Goggles.Type.ANTI_OBSERVATION)) {
-                data.observe(added, context.getWorld(), context.getPlayer());
+                data.pseudoObserve(added, context.getWorld(), context.getPlayer());
             }
             return true;
         }
