@@ -3,9 +3,8 @@ package com.acikek.qcraft.block;
 import com.acikek.qcraft.QCraft;
 import com.acikek.qcraft.block.qblock.InertQBlock;
 import com.acikek.qcraft.block.qblock.QBlock;
-import com.acikek.qcraft.block.qblock.QBlockItem;
+import com.acikek.qcraft.block.quantum_computer.QuantumComputer;
 import com.acikek.qcraft.item.Items;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.registry.Registry;
@@ -22,6 +21,7 @@ public class Blocks {
     public static final QBlock OBSERVER_DEPENDENT_BLOCK = new QBlock(QBlock.Type.OBSERVER_DEPENDENT);
     public static final QBlock QUANTUM_BLOCK = new QBlock(QBlock.Type.QUANTUM);
     public static final AutomatedObserver AUTOMATED_OBSERVER = new AutomatedObserver();
+    public static final QuantumComputer QUANTUM_COMPUTER = new QuantumComputer();
 
     public static final Map<String, Block> BLOCKS = new HashMap<>();
 
@@ -33,13 +33,14 @@ public class Blocks {
         BLOCKS.put("observer_dependent_block", OBSERVER_DEPENDENT_BLOCK);
         BLOCKS.put("quantum_block", QUANTUM_BLOCK);
         BLOCKS.put("automated_observer", AUTOMATED_OBSERVER);
+        BLOCKS.put("quantum_computer", QUANTUM_COMPUTER);
     }
 
     public static void register(String name, Block block) {
         Registry.register(Registry.BLOCK, QCraft.id(name), block);
-        BlockItem blockItem = block instanceof QBlock qBlock
-                ? new QBlockItem(qBlock, new FabricItemSettings().group(QCraft.ITEM_GROUP))
-                : new BlockItem(block, new FabricItemSettings().group(QCraft.ITEM_GROUP));
+        BlockItem blockItem = block instanceof BlockItemProvider provider
+                ? provider.getBlockItem().apply(block, Items.defaultSettings())
+                : new BlockItem(block, Items.defaultSettings());
         Items.register(name, blockItem);
     }
 

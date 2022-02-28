@@ -1,17 +1,20 @@
 package com.acikek.qcraft.block.qblock;
 
+import com.acikek.qcraft.block.BlockItemProvider;
 import com.acikek.qcraft.block.Blocks;
-import com.acikek.qcraft.world.QBlockLocation;
+import com.acikek.qcraft.world.state.location.QBlockLocation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Random;
+import java.util.function.BiFunction;
 
-public class QBlock extends InertQBlock {
+public class QBlock extends InertQBlock implements BlockItemProvider {
 
     public enum Type {
 
@@ -117,5 +120,10 @@ public class QBlock extends InertQBlock {
 
     public static QBlock getBlockFromItem(Item item) {
         return (QBlock) Block.getBlockFromItem(item);
+    }
+
+    @Override
+    public BiFunction<Block, Item.Settings, BlockItem> getBlockItem() {
+        return QBlockItem::new;
     }
 }
