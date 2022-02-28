@@ -1,6 +1,8 @@
 package com.acikek.qcraft.world;
 
 import com.acikek.qcraft.item.Goggles;
+import com.acikek.qcraft.world.state.QBlockData;
+import com.acikek.qcraft.world.state.location.QBlockLocation;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;

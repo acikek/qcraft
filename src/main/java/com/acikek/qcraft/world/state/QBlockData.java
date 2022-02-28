@@ -1,9 +1,10 @@
-package com.acikek.qcraft.world;
+package com.acikek.qcraft.world.state;
 
 import com.acikek.qcraft.QCraft;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
-import com.acikek.qcraft.world.frequency.FrequencyMap;
+import com.acikek.qcraft.world.state.location.QBlockLocation;
+import com.acikek.qcraft.world.state.frequency.FrequencyMap;
 import com.mojang.serialization.Codec;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;

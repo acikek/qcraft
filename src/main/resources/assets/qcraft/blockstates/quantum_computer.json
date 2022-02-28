@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "entangled=false": {
+      "model": "qcraft:block/quantum_computer"
+    },
+    "entangled=true": {
+      "model": "qcraft:block/quantum_computer"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 package com.acikek.qcraft.command;
 
-import com.acikek.qcraft.world.QBlockData;
+import com.acikek.qcraft.world.state.QBlockData;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;

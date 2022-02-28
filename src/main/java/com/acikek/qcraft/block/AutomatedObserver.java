@@ -1,7 +1,7 @@
 package com.acikek.qcraft.block;
 
 import com.acikek.qcraft.block.qblock.QBlock;
-import com.acikek.qcraft.world.QBlockData;
+import com.acikek.qcraft.world.state.QBlockData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;

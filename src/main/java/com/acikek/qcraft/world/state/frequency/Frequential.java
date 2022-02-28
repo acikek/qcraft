@@ -1,4 +1,4 @@
-package com.acikek.qcraft.world.frequency;
+package com.acikek.qcraft.world.state.frequency;
 
 import java.util.Optional;
 import java.util.UUID;

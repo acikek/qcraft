@@ -1,8 +1,8 @@
 package com.acikek.qcraft.block.qblock;
 
 import com.acikek.qcraft.item.Goggles;
-import com.acikek.qcraft.world.QBlockData;
-import com.acikek.qcraft.world.QBlockLocation;
+import com.acikek.qcraft.world.state.QBlockData;
+import com.acikek.qcraft.world.state.location.QBlockLocation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;

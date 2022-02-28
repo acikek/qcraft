@@ -1,10 +1,11 @@
-package com.acikek.qcraft.world;
+package com.acikek.qcraft.world.state.location;
 
 import com.acikek.qcraft.block.qblock.InertQBlock;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import com.acikek.qcraft.recipe.QBlockRecipe;
-import com.acikek.qcraft.world.frequency.Frequential;
+import com.acikek.qcraft.world.state.frequency.Frequential;
+import com.acikek.qcraft.world.state.QBlockData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
@@ -34,6 +35,8 @@ public class QBlockLocation extends Frequential {
                     )
                     .apply(instance, QBlockLocation::new)
     );
+
+    public static final Codec<List<QBlockLocation>> LIST_CODEC = Codec.list(CODEC);
 
     public final QBlock.Type type;
     public final BlockPos pos;
@@ -144,7 +147,7 @@ public class QBlockLocation extends Frequential {
     /**
      * Represents a pair of entangled qBlocks.
      */
-    public static class Pair extends com.acikek.qcraft.world.frequency.Pair<QBlockLocation> {
+    public static class Pair extends com.acikek.qcraft.world.state.frequency.Pair<QBlockLocation> {
 
         public Pair(QBlockLocation first) {
             super(first);

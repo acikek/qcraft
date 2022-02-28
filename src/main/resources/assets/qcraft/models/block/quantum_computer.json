@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "qcraft:block/quantum_computer_top",
+    "side": "qcraft:block/quantum_computer_side"
+  }
+}
