@@ -1,7 +1,7 @@
 package com.acikek.qcraft.block;
 
 import com.acikek.qcraft.block.qblock.QBlock;
-import com.acikek.qcraft.world.state.QBlockData;
+import com.acikek.qcraft.world.state.QCraftData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
@@ -38,7 +38,7 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         super.scheduledTick(state, world, pos, random);
         if (!world.isClient()) {
-            QBlockData data = QBlockData.get(world, true);
+            QCraftData data = QCraftData.get(world, true);
             data.getBlock(pos.offset(state.get(FACING).getOpposite())).ifPresent(location -> {
                 if (hasPower(world, pos, state)) {
                     if (!location.observed && data.getOtherNotObserved(location)) {

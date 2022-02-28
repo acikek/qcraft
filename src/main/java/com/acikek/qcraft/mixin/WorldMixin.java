@@ -1,6 +1,6 @@
 package com.acikek.qcraft.mixin;
 
-import com.acikek.qcraft.world.state.QBlockData;
+import com.acikek.qcraft.world.state.QCraftData;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,7 +26,7 @@ public abstract class WorldMixin {
             CallbackInfoReturnable<Boolean> cir
     ) {
         if (!isClient()) {
-            QBlockData data = QBlockData.get((World) (Object) this, false);
+            QCraftData data = QCraftData.get((World) (Object) this, false);
             if (!data.settingBlock) {
                 data.getBlock(pos).ifPresent(location -> {
                     if (location.isStateImpossible(state)) {

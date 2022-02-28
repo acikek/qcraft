@@ -25,11 +25,4 @@ public class QuantumComputerLocation extends Frequential {
         super(uuid);
         this.pos = pos;
     }
-
-    public static class Pair extends com.acikek.qcraft.world.state.frequency.Pair<QuantumComputerLocation> {
-
-        public Pair(QuantumComputerLocation first) {
-            super(first);
-        }
-    }
 }

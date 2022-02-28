@@ -3,64 +3,64 @@ package com.acikek.qcraft.world.state;
 import com.acikek.qcraft.QCraft;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
-import com.acikek.qcraft.world.state.location.QBlockLocation;
 import com.acikek.qcraft.world.state.frequency.FrequencyMap;
-import com.mojang.serialization.Codec;
+import com.acikek.qcraft.world.state.frequency.Frequential;
+import com.acikek.qcraft.world.state.location.QBlockLocation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class QBlockData extends PersistentState {
+public class QCraftData extends PersistentState {
 
-    public static final Codec<List<QBlockLocation>> CODEC = Codec.list(QBlockLocation.CODEC);
-    public static final String DATA = "qblocklocations";
+    public static final String DATA = "qblock_locations";
     public static final String KEY = QCraft.ID + "_" + DATA;
 
-    public final List<QBlockLocation> locations = new ArrayList<>();
+    public List<QBlockLocation> locations = new ArrayList<>();
     public boolean settingBlock = false;
     public QBlockLocation removed = null;
 
-    public final FrequencyMap<QBlockLocation, QBlockLocation.Pair> qBlockFrequencies = new FrequencyMap<>();
+    public FrequencyMap<QBlockLocation, QBlockLocation.Pair> frequencies = new FrequencyMap<>();
 
-    public QBlockData() {
+    public QCraftData() {
     }
 
     /**
-     * Gets or creates {@link QBlockData} state from the specified world.
+     * Gets or creates {@link QCraftData} state from the specified world.
      *
      * @param world The {@link ServerWorld} to get the state from.
-     * @return The {@link QBlockData} instance.
+     * @return The {@link QCraftData} instance.
      */
-    public static QBlockData get(World world, boolean filter) {
-        QBlockData data = ((ServerWorld) world).getPersistentStateManager().getOrCreate(QBlockData::fromNbt, QBlockData::new, KEY);
+    public static QCraftData get(World world, boolean filter) {
+        QCraftData data = ((ServerWorld) world).getPersistentStateManager().getOrCreate(QCraftData::fromNbt, QCraftData::new, KEY);
         if (filter) {
             data.filterLocations(world);
-            data.qBlockFrequencies.filter(data.locations);
+            data.frequencies.filter(data.locations);
         }
+        System.out.println(data.locations);
         return data;
     }
 
-    public static QBlockData fromNbt(NbtCompound nbt) {
-        QBlockData data = new QBlockData();
-        List<QBlockLocation> locations = CODEC.parse(NbtOps.INSTANCE, nbt.getList(DATA, NbtElement.COMPOUND_TYPE))
-                .result()
-                .orElse(Collections.emptyList());
+    public static QCraftData fromNbt(NbtCompound nbt) {
+        QCraftData data = new QCraftData();
+        List<QBlockLocation> locations = Frequential.parse(QBlockLocation.LIST_CODEC, nbt, DATA);
         if (!locations.isEmpty()) {
             data.locations.addAll(locations);
             QCraft.LOGGER.info("Loaded " + data.locations.size() + " qBlocks");
-            data.qBlockFrequencies.fill(locations, QBlockLocation.Pair::new);
-            QCraft.LOGGER.info("Loaded " + data.qBlockFrequencies.frequencies.size() + " frequencies");
+            data.frequencies.fill(locations, QBlockLocation.Pair::new);
+            QCraft.LOGGER.info("Loaded " + data.frequencies.frequencies.size() + " frequencies");
         }
         return data;
     }
@@ -88,7 +88,7 @@ public class QBlockData extends PersistentState {
     /**
      * @param loaded The locations that are in loaded chunks.
      * @return The {@link QBlockLocation}s that are within a close distance of the player.
-     * @see QBlockData#getLoadedLocations(ServerWorld)
+     * @see QCraftData#getLoadedLocations(ServerWorld)
      */
     public List<QBlockLocation> getLocalLocations(List<QBlockLocation> loaded, PlayerEntity player) {
         return loaded.stream()
@@ -115,7 +115,7 @@ public class QBlockData extends PersistentState {
                 : Optional.empty();
         QBlockLocation result = new QBlockLocation(type, blockPos, List.of(faces), false, frequency);
         locations.add(result);
-        frequency.ifPresent(f -> qBlockFrequencies.add(f, result, QBlockLocation.Pair::new));
+        frequency.ifPresent(f -> frequencies.add(f, result, QBlockLocation.Pair::new));
         markDirty();
         return result;
     }
@@ -139,12 +139,12 @@ public class QBlockData extends PersistentState {
     /**
      * Removes the specified block location.
      *
-     * @see QBlockData#removeBlock(BlockPos)
+     * @see QCraftData#removeBlock(BlockPos)
      */
     public void removeBlock(QBlockLocation location) {
         if (locations.remove(location)) {
             removed = location;
-            qBlockFrequencies.remove(location);
+            frequencies.remove(location);
             markDirty();
         }
     }
@@ -155,7 +155,7 @@ public class QBlockData extends PersistentState {
 
     /**
      * A wrapper for {@link World#setBlockState(BlockPos, BlockState)}.<br>
-     * This sets {@link QBlockData#settingBlock} to true so that {@link com.acikek.qcraft.mixin.WorldMixin} functions properly.
+     * This sets {@link QCraftData#settingBlock} to true so that {@link com.acikek.qcraft.mixin.WorldMixin} functions properly.
      */
     public void setBlockState(World world, BlockPos pos, BlockState state) {
         settingBlock = true;
@@ -174,7 +174,7 @@ public class QBlockData extends PersistentState {
     public void observe(QBlockLocation location, World world, PlayerEntity player) {
         QBlock.Face face = location.pickFace(player, world);
         observe(location, world, face);
-        qBlockFrequencies.ifPresent(location, pair -> {
+        frequencies.ifPresent(location, pair -> {
             QBlockLocation other = pair.getOther(location);
             if (other != null) {
                 setFaceBlock(world, other, face);
@@ -196,7 +196,7 @@ public class QBlockData extends PersistentState {
         setBlockState(world, location.pos, state);
         location.observed = false;
         if (checkFrequency) {
-            qBlockFrequencies.ifPresent(location, pair -> {
+            frequencies.ifPresent(location, pair -> {
                 QBlockLocation other = pair.getOther(location);
                 if (other != null && !other.observed) {
                     unobserve(other, world, false);
@@ -207,7 +207,7 @@ public class QBlockData extends PersistentState {
 
     public boolean getOtherNotObserved(QBlockLocation location) {
         AtomicBoolean otherObserved = new AtomicBoolean(false);
-        qBlockFrequencies.ifPresent(location, pair -> otherObserved.set(pair.getOtherObserved(location)));
+        frequencies.ifPresent(location, pair -> otherObserved.set(pair.getOtherObserved(location)));
         return !otherObserved.get();
     }
 
@@ -217,9 +217,7 @@ public class QBlockData extends PersistentState {
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
-        CODEC.encodeStart(NbtOps.INSTANCE, locations)
-                .result()
-                .ifPresent(tag -> nbt.put(DATA, tag));
+        Frequential.encode(QBlockLocation.LIST_CODEC, locations, nbt, DATA);
         return nbt;
     }
 }
