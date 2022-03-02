@@ -18,8 +18,7 @@ public class ClearQBlocksCommand implements Command<ServerCommandSource> {
     public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         QCraftData data = QCraftData.get(context.getSource().getWorld(), true);
         int size = data.locations.size();
-        data.locations.clear();
-        data.frequencies.frequencies.clear();
+        data.reset();
         Text message = new TranslatableText("command.qcraft.clear_qblocks.success", size);
         context.getSource().getPlayer().sendMessage(message, false);
         return 0;

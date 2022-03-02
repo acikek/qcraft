@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,9 +13,11 @@ import java.util.UUID;
 
 public class Frequential {
 
+    public final BlockPos pos;
     public Optional<UUID> frequency;
 
-    public Frequential(Optional<UUID> frequency) {
+    public Frequential(BlockPos pos, Optional<UUID> frequency) {
+        this.pos = pos;
         this.frequency = frequency;
     }
 

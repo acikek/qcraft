@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 
 public class QCraftData extends PersistentState {
 
+    public static final String KEY = QCraft.ID + "_" + "data";
     public static final String DATA = "qblock_locations";
-    public static final String KEY = QCraft.ID + "_" + DATA;
 
     public List<QBlockLocation> locations = new ArrayList<>();
     public boolean settingBlock = false;
@@ -49,7 +49,6 @@ public class QCraftData extends PersistentState {
             data.filterLocations(world);
             data.frequencies.filter(data.locations);
         }
-        System.out.println(data.locations);
         return data;
     }
 
@@ -113,7 +112,7 @@ public class QCraftData extends PersistentState {
         Optional<UUID> frequency = stackNbt.containsUuid("frequency")
                 ? Optional.of(stackNbt.getUuid("frequency"))
                 : Optional.empty();
-        QBlockLocation result = new QBlockLocation(type, blockPos, List.of(faces), false, frequency);
+        QBlockLocation result = new QBlockLocation(blockPos, frequency, type, List.of(faces), false);
         locations.add(result);
         frequency.ifPresent(f -> frequencies.add(f, result, QBlockLocation.Pair::new));
         markDirty();
@@ -147,6 +146,11 @@ public class QCraftData extends PersistentState {
             frequencies.remove(location);
             markDirty();
         }
+    }
+
+    public void reset() {
+        locations.clear();
+        frequencies.frequencies.clear();
     }
 
     public boolean hasBlock(BlockPos blockPos) {

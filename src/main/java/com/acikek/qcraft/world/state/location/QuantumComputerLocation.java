@@ -13,16 +13,13 @@ public class QuantumComputerLocation extends Frequential {
 
     public static final Codec<QuantumComputerLocation> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                            BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
-                            DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency)
-                    )
-                    .apply(instance, QuantumComputerLocation::new)
+                    BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
+                    DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency)
+            )
+            .apply(instance, QuantumComputerLocation::new)
     );
 
-    public BlockPos pos;
-
     public QuantumComputerLocation(BlockPos pos, Optional<UUID> uuid) {
-        super(uuid);
-        this.pos = pos;
+        super(pos, uuid);
     }
 }

@@ -27,19 +27,18 @@ public class QBlockLocation extends Frequential {
 
     public static final Codec<QBlockLocation> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                            QBlock.Type.CODEC.fieldOf("type").forGetter(l -> l.type),
-                            BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
-                            Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces),
-                            Codec.BOOL.fieldOf("observed").forGetter(l -> l.observed),
-                            DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency)
-                    )
-                    .apply(instance, QBlockLocation::new)
+                    BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
+                    DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency),
+                    QBlock.Type.CODEC.fieldOf("type").forGetter(l -> l.type),
+                    Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces),
+                    Codec.BOOL.fieldOf("observed").forGetter(l -> l.observed)
+            )
+            .apply(instance, QBlockLocation::new)
     );
 
     public static final Codec<List<QBlockLocation>> LIST_CODEC = Codec.list(CODEC);
 
     public final QBlock.Type type;
-    public final BlockPos pos;
     public final List<String> faces;
     public boolean observed;
 
@@ -53,10 +52,9 @@ public class QBlockLocation extends Frequential {
      * @param observed  Whether this location is currently observed.
      * @param frequency The String UUID of the location's entanglement frequency.
      */
-    public QBlockLocation(QBlock.Type type, BlockPos pos, List<String> faces, boolean observed, Optional<UUID> frequency) {
-        super(frequency);
+    public QBlockLocation(BlockPos pos, Optional<UUID> frequency, QBlock.Type type, List<String> faces, boolean observed) {
+        super(pos, frequency);
         this.type = type;
-        this.pos = pos;
         this.faces = faces;
         this.observed = observed;
     }
