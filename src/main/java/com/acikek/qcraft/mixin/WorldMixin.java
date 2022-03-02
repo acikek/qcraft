@@ -26,11 +26,12 @@ public abstract class WorldMixin {
             CallbackInfoReturnable<Boolean> cir
     ) {
         if (!isClient()) {
+            World world = (World) (Object) this;
             QCraftData data = QCraftData.get((World) (Object) this, false);
             if (!data.settingBlock) {
                 data.getBlock(pos).ifPresent(location -> {
-                    if (location.isStateImpossible(state)) {
-                        data.removeBlock(location);
+                    if (!world.getBlockState(pos).isOf(state.getBlock())) {
+                        data.removeBlock(location, false);
                     }
                 });
             }

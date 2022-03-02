@@ -68,7 +68,7 @@ public abstract class BlockMixin {
             CallbackInfo ci
     ) {
         if (!world.isClient()) {
-            QCraftData.get(world, false).removeBlock(pos);
+            QCraftData.get(world, false).removeBlock(pos, true);
         }
     }
 }

@@ -131,18 +131,20 @@ public class QCraftData extends PersistentState {
     /**
      * Removes the block at the specified block position, if present.
      */
-    public void removeBlock(BlockPos blockPos) {
-        getBlock(blockPos).ifPresent(this::removeBlock);
+    public void removeBlock(BlockPos blockPos, boolean save) {
+        getBlock(blockPos).ifPresent(location -> removeBlock(location, save));
     }
 
     /**
      * Removes the specified block location.
      *
-     * @see QCraftData#removeBlock(BlockPos)
+     * @see QCraftData#removeBlock(BlockPos, boolean)
      */
-    public void removeBlock(QBlockLocation location) {
+    public void removeBlock(QBlockLocation location, boolean save) {
         if (locations.remove(location)) {
-            removed = location;
+            if (save) {
+                removed = location;
+            }
             frequencies.remove(location);
             markDirty();
         }
