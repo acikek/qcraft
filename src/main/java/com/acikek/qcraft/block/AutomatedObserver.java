@@ -31,7 +31,7 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
 
     @Override
     protected boolean hasPower(World world, BlockPos pos, BlockState state) {
-        return world.isReceivingRedstonePower(pos);
+        return getPower(world, pos, state) > 0;
     }
 
     @Override
