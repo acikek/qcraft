@@ -2,6 +2,7 @@ package com.acikek.qcraft;
 
 import com.acikek.qcraft.block.Blocks;
 import com.acikek.qcraft.block.QuantumOre;
+import com.acikek.qcraft.block.quantum_computer.QuantumComputerBlockEntity;
 import com.acikek.qcraft.command.ClearQBlocksCommand;
 import com.acikek.qcraft.item.Items;
 import com.acikek.qcraft.recipe.EntangledPairRecipe;
@@ -35,6 +36,7 @@ public class QCraft implements ModInitializer {
     public void onInitialize() {
         Blocks.registerAll();
         Items.registerAll();
+        QuantumComputerBlockEntity.register();
         QBlockRecipe.register();
         EntangledPairRecipe.register();
         QuantumOre.createFeatures();

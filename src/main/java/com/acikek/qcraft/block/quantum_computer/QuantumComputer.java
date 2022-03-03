@@ -2,7 +2,11 @@ package com.acikek.qcraft.block.quantum_computer;
 
 import com.acikek.qcraft.block.BlockItemProvider;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Material;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -15,7 +19,7 @@ import net.minecraft.world.explosion.Explosion;
 
 import java.util.function.BiFunction;
 
-public class QuantumComputer extends Block implements BlockItemProvider {
+public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider {
 
     public static final BooleanProperty ENTANGLED = BooleanProperty.of("entangled");
 
@@ -49,5 +53,10 @@ public class QuantumComputer extends Block implements BlockItemProvider {
     @Override
     public BiFunction<Block, Item.Settings, BlockItem> getBlockItem() {
         return QuantumComputerItem::new;
+    }
+
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new QuantumComputerBlockEntity(pos, state);
     }
 }

@@ -1,5 +1,6 @@
 package com.acikek.qcraft.block.qblock;
 
+import com.acikek.qcraft.block.quantum_computer.QuantumComputerItem;
 import com.acikek.qcraft.item.Goggles;
 import com.acikek.qcraft.world.state.QCraftData;
 import com.acikek.qcraft.world.state.location.QBlockLocation;
@@ -57,7 +58,8 @@ public class QBlockItem extends BlockItem {
 
     public static boolean checkStacks(ItemStack left, ItemStack right) {
         return !left.isEmpty() && !right.isEmpty()
-                && QBlock.getBlockFromItem(left.getItem()).type == QBlock.getBlockFromItem(right.getItem()).type
-                && Arrays.equals(getFaces(left), getFaces(right));
+                && (QuantumComputerItem.isAvailable(left) && QuantumComputerItem.isAvailable(right))
+                || (QBlock.getBlockFromItem(left.getItem()).type == QBlock.getBlockFromItem(right.getItem()).type
+                    && Arrays.equals(getFaces(left), getFaces(right)));
     }
 }
