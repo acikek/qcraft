@@ -196,7 +196,9 @@ public class QCraftData extends PersistentState {
 
     public void observe(QBlockLocation location, World world, QBlock.Face face, PlayerEntity player, QBlock.Observation type, boolean entangled) {
         setFaceBlock(location, world, face);
-        location.observed = true;
+        if (!entangled) {
+            location.observed = true;
+        }
         if (player != null) {
             Criteria.QUANTUM_OBSERVATION.trigger((ServerPlayerEntity) player, location.pos, type, location.type, entangled);
         }
