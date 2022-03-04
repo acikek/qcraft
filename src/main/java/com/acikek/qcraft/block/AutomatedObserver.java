@@ -1,6 +1,5 @@
 package com.acikek.qcraft.block;
 
-import com.acikek.qcraft.advancement.QuantumObservationCriterion;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.world.state.QCraftData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -47,9 +46,9 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
             data.getBlock(pos.offset(state.get(FACING).getOpposite())).ifPresent(location -> {
                 if (hasPower(world, pos, state)) {
                     if (!location.observed && data.getOtherNotObserved(location)) {
-                        PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 64.0, false);
+                        PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10.0, false);
                         QBlock.Face face = location.type.pickFace(state.get(FACING), world.random);
-                        data.observe(location, world, face, player, QuantumObservationCriterion.Type.AUTOMATED_OBSERVER, false);
+                        data.observe(location, world, face, player, QBlock.Observation.AUTOMATED_OBSERVER, false);
                     }
                 }
                 else if (location.observed) {

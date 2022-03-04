@@ -19,7 +19,7 @@
     "automated_observation": {
       "trigger": "qcraft:quantum_observation",
       "conditions": {
-        "observation_type": "automated_observer"
+        "observation": "automated_observer"
       }
     }
   },

@@ -24,8 +24,8 @@
             "minecraft:redstone_block"
           ]
         },
-        "observation_type": "automated_observer",
-        "qblock_type": "quantum"
+        "observation": "automated_observer",
+        "type": "quantum"
       }
     }
   },

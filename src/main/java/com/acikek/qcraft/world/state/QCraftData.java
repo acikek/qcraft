@@ -2,7 +2,6 @@ package com.acikek.qcraft.world.state;
 
 import com.acikek.qcraft.QCraft;
 import com.acikek.qcraft.advancement.Criteria;
-import com.acikek.qcraft.advancement.QuantumObservationCriterion;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import com.acikek.qcraft.world.state.frequency.FrequencyMap;
@@ -186,16 +185,16 @@ public class QCraftData extends PersistentState {
 
     public void observe(QBlockLocation location, World world, PlayerEntity player) {
         QBlock.Face face = location.pickFace(player, world);
-        observe(location, world, face, player, QuantumObservationCriterion.Type.PLAYER, false);
+        observe(location, world, face, player, QBlock.Observation.PLAYER, false);
         qBlockFrequencies.ifPresent(location, pair -> {
             QBlockLocation other = pair.getOther(location);
             if (other != null) {
-                observe(other, world, face, player, QuantumObservationCriterion.Type.PLAYER, true);
+                observe(other, world, face, player, QBlock.Observation.PLAYER, true);
             }
         });
     }
 
-    public void observe(QBlockLocation location, World world, QBlock.Face face, PlayerEntity player, QuantumObservationCriterion.Type type, boolean entangled) {
+    public void observe(QBlockLocation location, World world, QBlock.Face face, PlayerEntity player, QBlock.Observation type, boolean entangled) {
         setFaceBlock(location, world, face);
         location.observed = true;
         if (player != null) {

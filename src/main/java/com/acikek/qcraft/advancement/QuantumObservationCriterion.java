@@ -2,6 +2,7 @@ package com.acikek.qcraft.advancement;
 
 import com.acikek.qcraft.QCraft;
 import com.acikek.qcraft.block.qblock.QBlock;
+import com.acikek.qcraft.predicate.EnumPredicate;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.minecraft.advancement.criterion.AbstractCriterion;
@@ -22,15 +23,10 @@ public class QuantumObservationCriterion extends AbstractCriterion<QuantumObserv
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
         BlockPredicate face = BlockPredicate.fromJson(obj.get("face"));
-        JsonPrimitive observationType = obj.getAsJsonPrimitive("observation_type");
-        JsonPrimitive qBlockType = obj.getAsJsonPrimitive("qblock_type");
+        EnumPredicate<QBlock.Observation> observation = EnumPredicate.fromJson(obj.get("observation"), QBlock.Observation::valueOf);
+        EnumPredicate<QBlock.Type> type = EnumPredicate.fromJson(obj.get("type"), QBlock.Type::valueOf);
         JsonPrimitive entangled = obj.getAsJsonPrimitive("entangled");
-        return new Conditions(
-                playerPredicate, face,
-                observationType != null ? Type.valueOf(observationType.getAsString().toUpperCase()) : null,
-                qBlockType != null ? QBlock.Type.valueOf(qBlockType.getAsString().toUpperCase()) : null,
-                entangled != null && entangled.getAsBoolean()
-        );
+        return new Conditions(playerPredicate, face, observation, type, entangled != null && entangled.getAsBoolean());
     }
 
     @Override
@@ -38,49 +34,38 @@ public class QuantumObservationCriterion extends AbstractCriterion<QuantumObserv
         return ID;
     }
 
-    public void trigger(ServerPlayerEntity player, BlockPos pos, Type observationType, QBlock.Type qBlockType, boolean entangled) {
+    public void trigger(ServerPlayerEntity player, BlockPos pos, QBlock.Observation observationType, QBlock.Type qBlockType, boolean entangled) {
         trigger(player, (Conditions conditions) -> conditions.matches(player.getWorld(), pos, observationType, qBlockType, entangled));
-    }
-
-    public enum Type {
-        PLAYER,
-        AUTOMATED_OBSERVER
     }
 
     public static class Conditions extends AbstractCriterionConditions {
 
         public BlockPredicate face;
-        public Type observationType;
-        public QBlock.Type qBlockType;
+        public EnumPredicate<QBlock.Observation> observation;
+        public EnumPredicate<QBlock.Type> type;
         public boolean entangled;
 
-        public Conditions(EntityPredicate.Extended playerPredicate, BlockPredicate face, Type observationType, QBlock.Type qBlockType, boolean entangled) {
+        public Conditions(EntityPredicate.Extended playerPredicate, BlockPredicate face, EnumPredicate<QBlock.Observation> observation, EnumPredicate<QBlock.Type> type, boolean entangled) {
             super(ID, playerPredicate);
             this.face = face;
-            this.observationType = observationType;
-            this.qBlockType = qBlockType;
+            this.observation = observation;
+            this.type = type;
             this.entangled = entangled;
         }
 
-        public boolean matches(ServerWorld world, BlockPos pos, Type observationType, QBlock.Type qBlockType, boolean entangled) {
+        public boolean matches(ServerWorld world, BlockPos pos, QBlock.Observation observation, QBlock.Type type, boolean entangled) {
             return face.test(world, pos)
-                    && (this.observationType == null || this.observationType == observationType)
-                    && (this.qBlockType == null || this.qBlockType ==  qBlockType)
+                    && this.observation.test(observation)
+                    && this.type.test(type)
                     && this.entangled == entangled;
         }
 
         @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
             JsonObject jsonObject = super.toJson(predicateSerializer);
-            if (face != null) {
-                jsonObject.add("face", face.toJson());
-            }
-            if (observationType != null) {
-                jsonObject.add("observation_type", new JsonPrimitive(observationType.toString().toLowerCase()));
-            }
-            if (qBlockType != null) {
-                jsonObject.add("qblock_type", new JsonPrimitive(qBlockType.toString().toLowerCase()));
-            }
+            jsonObject.add("face", face.toJson());
+            jsonObject.add("observation", observation.toJson());
+            jsonObject.add("type", type.toJson());
             jsonObject.add("entangled", new JsonPrimitive(entangled));
             return jsonObject;
         }

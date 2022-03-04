@@ -19,7 +19,7 @@
     "observe_entangled": {
       "trigger": "qcraft:quantum_observation",
       "conditions": {
-        "observation_type": "player",
+        "observation": "player",
         "entangled": true
       }
     }

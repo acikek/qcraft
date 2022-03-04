@@ -70,6 +70,11 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
         }
     }
 
+    public enum Observation {
+        PLAYER,
+        AUTOMATED_OBSERVER
+    }
+
     public enum Face {
 
         UP(0, 0),
