@@ -154,8 +154,14 @@ public class QBlockLocation extends Frequential {
      */
     public static class Pair extends com.acikek.qcraft.world.state.frequency.Pair<QBlockLocation> {
 
+        public static final Codec<Pair> CODEC = getCodec(QBlockLocation.CODEC, Pair::new);
+
         public Pair(QBlockLocation first) {
             super(first);
+        }
+
+        public Pair(Optional<QBlockLocation> left, Optional<QBlockLocation> right) {
+            super(left, right);
         }
 
         public boolean getOtherObserved(QBlockLocation location) {
