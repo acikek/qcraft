@@ -68,12 +68,12 @@ public class QuantumOre extends RedstoneOreBlock {
                         8
                 ));
         QUANTUM_ORE_PLACED_FEATURE = QUANTUM_ORE_CONFIGURED_FEATURE.withPlacement(
-                CountPlacementModifier.of(4),
+                CountPlacementModifier.of(8),
                 SquarePlacementModifier.of(),
                 HeightRangePlacementModifier.uniform(YOffset.getBottom(), YOffset.fixed(15))
         );
-        DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE = QUANTUM_ORE_CONFIGURED_FEATURE.withPlacement(
-                CountPlacementModifier.of(4),
+        DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE = DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE.withPlacement(
+                CountPlacementModifier.of(8),
                 SquarePlacementModifier.of(),
                 HeightRangePlacementModifier.trapezoid(YOffset.aboveBottom(-32), YOffset.aboveBottom(32))
         );
