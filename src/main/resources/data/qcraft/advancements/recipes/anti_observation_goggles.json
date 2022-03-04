@@ -1,0 +1,60 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "qcraft:anti_observation_goggles"
+    ]
+  },
+  "criteria": {
+    "has_iron": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:iron_ingot"
+            ]
+          }
+        ]
+      }
+    },
+    "has_glass": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:glass_pane"
+            ]
+          }
+        ]
+      }
+    },
+    "has_observation_essence": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:observation_essence"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "qcraft:anti_observation_goggles"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_iron",
+      "has_glass",
+      "has_observation_essence",
+      "has_the_recipe"
+    ]
+  ]
+}

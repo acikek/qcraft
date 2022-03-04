@@ -1,5 +1,6 @@
 package com.acikek.qcraft;
 
+import com.acikek.qcraft.advancement.Criteria;
 import com.acikek.qcraft.block.Blocks;
 import com.acikek.qcraft.block.QuantumOre;
 import com.acikek.qcraft.block.quantum_computer.QuantumComputerBlockEntity;
@@ -34,8 +35,10 @@ public class QCraft implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        QCraft.LOGGER.info("Initializing qCraft");
         Blocks.registerAll();
         Items.registerAll();
+        Criteria.registerAll();
         QuantumComputerBlockEntity.register();
         QBlockRecipe.register();
         EntangledPairRecipe.register();

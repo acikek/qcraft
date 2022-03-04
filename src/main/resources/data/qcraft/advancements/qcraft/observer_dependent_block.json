@@ -1,0 +1,37 @@
+{
+  "parent": "qcraft:qcraft/root",
+  "display": {
+    "icon": {
+      "item": "qcraft:observation_essence"
+    },
+    "title": {
+      "translate": "advancements.qcraft.observer_dependent_block.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.observer_dependent_block.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_odb": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:observer_dependent_block"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain_odb"
+    ]
+  ]
+}

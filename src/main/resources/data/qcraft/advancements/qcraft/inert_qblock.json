@@ -1,0 +1,50 @@
+{
+  "parent": "qcraft:qcraft/root",
+  "display": {
+    "icon": {
+      "item": "minecraft:piston"
+    },
+    "title": {
+      "translate": "advancements.qcraft.inert_qblock.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.inert_qblock.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_inert_odb": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:inert_observer_dependent_block"
+            ]
+          }
+        ]
+      }
+    },
+    "obtain_inert_qb": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:inert_quantum_block"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain_inert_odb",
+      "obtain_inert_qb"
+    ]
+  ]
+}

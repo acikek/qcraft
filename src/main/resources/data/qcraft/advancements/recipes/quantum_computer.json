@@ -1,0 +1,86 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "qcraft:quantum_computer"
+    ]
+  },
+  "criteria": {
+    "has_observation_essence": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:observation_essence"
+            ]
+          }
+        ]
+      }
+    },
+    "has_iron": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:iron_ingot"
+            ]
+          }
+        ]
+      }
+    },
+    "has_glowstone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:glowstone_dust"
+            ]
+          }
+        ]
+      }
+    },
+    "has_copper": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:copper_ingot"
+            ]
+          }
+        ]
+      }
+    },
+    "has_redstone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:redstone"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "qcraft:observation_essence"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_observation_essence",
+      "has_iron",
+      "has_glowstone",
+      "has_copper",
+      "has_redstone",
+      "has_the_recipe"
+    ]
+  ]
+}

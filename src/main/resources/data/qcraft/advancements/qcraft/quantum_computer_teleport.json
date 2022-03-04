@@ -1,0 +1,28 @@
+{
+  "parent": "qcraft:qcraft/quantum_computer",
+  "display": {
+    "icon": {
+      "item": "minecraft:ender_pearl"
+    },
+    "title": {
+      "translate": "advancements.qcraft.quantum_computer.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.quantum_computer.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "quantum_teleport": {
+      "trigger": "qcraft:quantum_teleportation"
+    }
+  },
+  "requirements": [
+    [
+      "quantum_teleoport"
+    ]
+  ]
+}

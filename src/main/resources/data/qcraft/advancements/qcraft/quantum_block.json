@@ -1,0 +1,37 @@
+{
+  "parent": "qcraft:qcraft/root",
+  "display": {
+    "icon": {
+      "item": "qcraft:superposition_essence"
+    },
+    "title": {
+      "translate": "advancements.qcraft.quantum_block.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.quantum_block.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_qb": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:quantum_block"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain_qb"
+    ]
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "parent": "qcraft:qcraft/automated_observer",
+  "display": {
+    "icon": {
+      "item": "minecraft:redstone_block"
+    },
+    "title": {
+      "translate": "advancements.qcraft.redstone_randomness.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.redstone_randomness.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "automated_observation": {
+      "trigger": "qcraft:quantum_observation",
+      "conditions": {
+        "face": {
+          "blocks": [
+            "minecraft:redstone_block"
+          ]
+        },
+        "observation_type": "automated_observer",
+        "qblock_type": "quantum"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "automated_observation"
+    ]
+  ]
+}

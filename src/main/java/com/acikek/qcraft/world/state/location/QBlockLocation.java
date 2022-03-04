@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.BlockPredicate;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.BlockPos;
@@ -135,6 +136,12 @@ public class QBlockLocation extends Frequential {
         }
         String id = Registry.BLOCK.getId(block).toString();
         return !faces.contains(id);
+    }
+
+    public BlockPredicate getBlockPredicate(QBlock.Face face) {
+        return BlockPredicate.Builder.create()
+                .blocks(getFaceBlock(face))
+                .build();
     }
 
     @Override

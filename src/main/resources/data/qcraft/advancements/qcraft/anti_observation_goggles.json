@@ -1,0 +1,37 @@
+{
+  "parent": "qcraft:qcraft/observer_dependent_block",
+  "display": {
+    "icon": {
+      "item": "qcraft:anti_observation_goggles"
+    },
+    "title": {
+      "translate": "advancements.qcraft.anti_observation_goggles.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.anti_observation_goggles.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_goggles": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:anti_observation_goggles"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain_goggles"
+    ]
+  ]
+}

@@ -1,6 +1,8 @@
 package com.acikek.qcraft.world.state;
 
 import com.acikek.qcraft.QCraft;
+import com.acikek.qcraft.advancement.Criteria;
+import com.acikek.qcraft.advancement.QuantumObservationCriterion;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import com.acikek.qcraft.world.state.frequency.FrequencyMap;
@@ -11,6 +13,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -172,33 +175,32 @@ public class QCraftData extends PersistentState {
         world.setBlockState(pos, state);
     }
 
-    public void setFaceBlock(World world, QBlockLocation location, QBlock.Face face) {
+    public void setFaceBlock(QBlockLocation location, World world, QBlock.Face face) {
         BlockState state = location.getFaceBlock(face).getDefaultState();
         setBlockState(world, location.pos, state);
     }
 
     public void pseudoObserve(QBlockLocation location, World world, PlayerEntity player) {
-        setFaceBlock(world, location, location.pickFace(player, world));
+        setFaceBlock(location, world, location.pickFace(player, world));
     }
 
     public void observe(QBlockLocation location, World world, PlayerEntity player) {
         QBlock.Face face = location.pickFace(player, world);
-        observe(location, world, face);
+        observe(location, world, face, player, QuantumObservationCriterion.Type.PLAYER, false);
         qBlockFrequencies.ifPresent(location, pair -> {
             QBlockLocation other = pair.getOther(location);
             if (other != null) {
-                setFaceBlock(world, other, face);
+                observe(other, world, face, player, QuantumObservationCriterion.Type.PLAYER, true);
             }
         });
     }
 
-    public void observe(QBlockLocation location, World world, QBlock.Axis axis) {
-        observe(location, world, axis.getRandomFace(world.random));
-    }
-
-    public void observe(QBlockLocation location, World world, QBlock.Face face) {
-        setFaceBlock(world, location, face);
+    public void observe(QBlockLocation location, World world, QBlock.Face face, PlayerEntity player, QuantumObservationCriterion.Type type, boolean entangled) {
+        setFaceBlock(location, world, face);
         location.observed = true;
+        if (player != null) {
+            Criteria.QUANTUM_OBSERVATION.trigger((ServerPlayerEntity) player, location.pos, type, location.type, entangled);
+        }
     }
 
     public void unobserve(QBlockLocation location, World world, boolean checkFrequency) {

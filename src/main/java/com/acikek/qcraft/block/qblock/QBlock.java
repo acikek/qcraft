@@ -52,6 +52,13 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
             };
         }
 
+        public Face pickFace(Direction direction, Random random) {
+            return switch (this) {
+                case OBSERVER_DEPENDENT -> Face.from(direction);
+                case QUANTUM -> Axis.from(direction.getAxis()).getRandomFace(random);
+            };
+        }
+
         public final String id;
 
         Type(String id) {
@@ -78,6 +85,17 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
         Face(int slot, int index) {
             this.slot = slot;
             this.index = index;
+        }
+
+        public static Face from(Direction direction) {
+            return switch (direction) {
+                case UP -> UP;
+                case NORTH -> NORTH;
+                case WEST -> WEST;
+                case EAST -> EAST;
+                case DOWN -> DOWN;
+                case SOUTH -> SOUTH;
+            };
         }
 
         public static final int CENTER = 4;

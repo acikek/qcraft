@@ -1,0 +1,37 @@
+{
+  "parent": "qcraft:qcraft/entangled_blocks",
+  "display": {
+    "icon": {
+      "item": "qcraft:quantum_computer"
+    },
+    "title": {
+      "translate": "advancements.qcraft.quantum_computer.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.quantum_computer.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain_qc": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:quantum_computer"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain_qc"
+    ]
+  ]
+}

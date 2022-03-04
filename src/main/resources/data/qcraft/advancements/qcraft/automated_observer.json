@@ -1,0 +1,31 @@
+{
+  "parent": "qcraft:qcraft/observer_dependent_block",
+  "display": {
+    "icon": {
+      "item": "qcraft:automated_observer"
+    },
+    "title": {
+      "translate": "advancements.qcraft.automated_observer.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.automated_observer.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "automated_observation": {
+      "trigger": "qcraft:quantum_observation",
+      "conditions": {
+        "observation_type": "automated_observer"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "automated_observation"
+    ]
+  ]
+}

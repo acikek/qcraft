@@ -1,0 +1,32 @@
+{
+  "parent": "qcraft:qcraft/root",
+  "display": {
+    "icon": {
+      "item": "qcraft:entanglement_essence"
+    },
+    "title": {
+      "translate": "advancements.qcraft.entangled_blocks.title"
+    },
+    "description": {
+      "translate": "advancements.qcraft.entangled_blocks.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "observe_entangled": {
+      "trigger": "qcraft:quantum_observation",
+      "conditions": {
+        "observation_type": "player",
+        "entangled": true
+      }
+    }
+  },
+  "requirements": [
+    [
+      "observe_entangled"
+    ]
+  ]
+}
