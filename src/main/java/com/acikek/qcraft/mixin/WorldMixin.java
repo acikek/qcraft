@@ -29,9 +29,9 @@ public abstract class WorldMixin {
             World world = (World) (Object) this;
             QCraftData data = QCraftData.get((World) (Object) this, false);
             if (!data.settingBlock) {
-                data.getBlock(pos).ifPresent(location -> {
+                data.qBlockLocations.get(pos).ifPresent(location -> {
                     if (!world.getBlockState(pos).isOf(state.getBlock())) {
-                        data.removeBlock(location, false);
+                        data.qBlockLocations.remove(data, location, false);
                     }
                 });
             }

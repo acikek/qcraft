@@ -4,15 +4,14 @@ import com.acikek.qcraft.block.qblock.InertQBlock;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import com.acikek.qcraft.recipe.QBlockRecipe;
-import com.acikek.qcraft.world.state.frequency.Frequential;
 import com.acikek.qcraft.world.state.QCraftData;
+import com.acikek.qcraft.world.state.frequency.Frequential;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.BlockPredicate;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.BlockPos;
@@ -136,12 +135,6 @@ public class QBlockLocation extends Frequential {
         }
         String id = Registry.BLOCK.getId(block).toString();
         return !faces.contains(id);
-    }
-
-    public BlockPredicate getBlockPredicate(QBlock.Face face) {
-        return BlockPredicate.Builder.create()
-                .blocks(getFaceBlock(face))
-                .build();
     }
 
     @Override

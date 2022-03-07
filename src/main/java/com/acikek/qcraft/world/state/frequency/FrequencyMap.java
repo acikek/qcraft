@@ -10,11 +10,11 @@ public class FrequencyMap<T extends Frequential, P extends Pair<T>> {
 
     public Map<UUID, P> frequencies = new HashMap<>();
 
-    public void filter(List<T> list) {
+    public void filter(LocationList<T> list) {
         int size = frequencies.size();
         for (Map.Entry<UUID, P> frequency : frequencies.entrySet()) {
             for (T item : frequency.getValue().getBoth()) {
-                if (item != null && !list.contains(item  )) {
+                if (item != null && !list.locations.contains(item)) {
                     frequencies.remove(frequency.getKey());
                     break;
                 }

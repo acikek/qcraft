@@ -43,7 +43,7 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
         super.scheduledTick(state, world, pos, random);
         if (!world.isClient()) {
             QCraftData data = QCraftData.get(world, true);
-            data.getBlock(pos.offset(state.get(FACING).getOpposite())).ifPresent(location -> {
+            data.qBlockLocations.get(pos.offset(state.get(FACING).getOpposite())).ifPresent(location -> {
                 if (hasPower(world, pos, state)) {
                     if (!location.observed && data.getOtherNotObserved(location)) {
                         PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10.0, false);

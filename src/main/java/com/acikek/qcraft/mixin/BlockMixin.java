@@ -26,9 +26,9 @@ public abstract class BlockMixin {
 
     private static void setQBlockDrop(ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
         QCraftData data = QCraftData.get(world, false);
-        if (data.removed != null) {
-            cir.setReturnValue(List.of(data.removed.getItemStack()));
-            data.removed = null;
+        if (data.qBlockLocations.removed != null) {
+            cir.setReturnValue(List.of(data.qBlockLocations.removed.getItemStack()));
+            data.qBlockLocations.removed = null;
         }
     }
 
@@ -68,7 +68,8 @@ public abstract class BlockMixin {
             CallbackInfo ci
     ) {
         if (!world.isClient()) {
-            QCraftData.get(world, false).removeBlock(pos, true);
+            QCraftData data = QCraftData.get(world, false);
+            data.qBlockLocations.remove(data, pos, true);
         }
     }
 }

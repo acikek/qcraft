@@ -48,7 +48,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
         if (data == null) {
             data = QCraftData.get(world, true);
         }
-        if (data.qBlockLocations.isEmpty()) {
+        if (data.qBlockLocations.locations.isEmpty()) {
             return;
         }
         List<QBlockLocation> loadedLocations = data.getLoadedLocations(world);

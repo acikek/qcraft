@@ -25,7 +25,7 @@ public abstract class ItemPlacementContextMixin extends ItemUsageContext {
 
     @Inject(method = "canPlace", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "HEAD"))
     private void cancelIfQBlock(CallbackInfoReturnable<Boolean> cir) {
-        if (!getWorld().isClient() && QCraftData.get(getWorld(), true).hasBlock(getBlockPos())) {
+        if (!getWorld().isClient() && QCraftData.get(getWorld(), true).qBlockLocations.has(getBlockPos())) {
             cir.setReturnValue(false);
         }
     }

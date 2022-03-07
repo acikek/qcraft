@@ -21,7 +21,11 @@ public class QuantumComputerItem extends BlockItem {
                 NbtCompound nbt = context.getStack().getOrCreateNbt();
                 if (nbt != null && nbt.containsUuid("frequency")) {
                     entity.frequency = nbt.getUuid("frequency");
+                    entity.markDirty();
                 }
+            }
+            if (!context.getWorld().isClient()) {
+                //QCraftData.get(context.getWorld(), true).qBlockLocations.
             }
             return true;
         }
