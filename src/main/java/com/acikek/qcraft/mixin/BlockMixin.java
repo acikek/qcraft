@@ -1,6 +1,6 @@
 package com.acikek.qcraft.mixin;
 
-import com.acikek.qcraft.world.state.QCraftData;
+import com.acikek.qcraft.world.state.QBlockData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -25,10 +25,10 @@ import java.util.List;
 public abstract class BlockMixin {
 
     private static void setQBlockDrop(ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
-        QCraftData data = QCraftData.get(world, false);
-        if (data.qBlockLocations.removed != null) {
-            cir.setReturnValue(List.of(data.qBlockLocations.removed.getItemStack()));
-            data.qBlockLocations.removed = null;
+        QBlockData data = QBlockData.get(world, false);
+        if (data.locations.removed != null) {
+            cir.setReturnValue(List.of(data.locations.removed.getItemStack()));
+            data.locations.removed = null;
         }
     }
 
@@ -68,8 +68,8 @@ public abstract class BlockMixin {
             CallbackInfo ci
     ) {
         if (!world.isClient()) {
-            QCraftData data = QCraftData.get(world, false);
-            data.qBlockLocations.remove(data, pos, true);
+            QBlockData data = QBlockData.get(world, false);
+            data.locations.get(pos).ifPresent(location -> data.remove(location, true));
         }
     }
 }

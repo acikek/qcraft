@@ -1,6 +1,7 @@
 package com.acikek.qcraft.block.quantum_computer;
 
 import com.acikek.qcraft.block.BlockItemProvider;
+import com.acikek.qcraft.world.state.QuantumComputerData;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -8,13 +9,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
 
 import java.util.function.BiFunction;
@@ -30,14 +31,22 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         setDefaultState(getStateManager().getDefaultState().with(ENTANGLED, false));
     }
 
+    public void remove(World world, BlockPos pos) {
+        if (!world.isClient()) {
+            QuantumComputerData data = QuantumComputerData.get(world);
+            data.locations.get(pos).ifPresent(location -> data.remove(location, false));
+        }
+    }
+
     @Override
-    public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-        // TODO
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        super.onBreak(world, pos, state, player);
+        remove(world, pos);
     }
 
     @Override
     public void onDestroyedByExplosion(World world, BlockPos pos, Explosion explosion) {
-        // TODO
+        remove(world, pos);
     }
 
     @Override

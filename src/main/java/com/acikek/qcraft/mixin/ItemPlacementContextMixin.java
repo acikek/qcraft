@@ -1,6 +1,6 @@
 package com.acikek.qcraft.mixin;
 
-import com.acikek.qcraft.world.state.QCraftData;
+import com.acikek.qcraft.world.state.QBlockData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemUsageContext;
@@ -25,7 +25,7 @@ public abstract class ItemPlacementContextMixin extends ItemUsageContext {
 
     @Inject(method = "canPlace", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "HEAD"))
     private void cancelIfQBlock(CallbackInfoReturnable<Boolean> cir) {
-        if (!getWorld().isClient() && QCraftData.get(getWorld(), true).qBlockLocations.has(getBlockPos())) {
+        if (!getWorld().isClient() && QBlockData.get(getWorld(), true).locations.has(getBlockPos())) {
             cir.setReturnValue(false);
         }
     }

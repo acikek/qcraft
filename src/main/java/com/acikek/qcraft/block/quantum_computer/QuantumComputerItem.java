@@ -1,11 +1,12 @@
 package com.acikek.qcraft.block.quantum_computer;
 
+import com.acikek.qcraft.world.state.QuantumComputerData;
+import com.acikek.qcraft.world.state.frequency.Frequential;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 
 public class QuantumComputerItem extends BlockItem {
 
@@ -18,14 +19,13 @@ public class QuantumComputerItem extends BlockItem {
         if (super.place(context, state)) {
             QuantumComputerBlockEntity entity = (QuantumComputerBlockEntity) context.getWorld().getBlockEntity(context.getBlockPos());
             if (entity != null) {
-                NbtCompound nbt = context.getStack().getOrCreateNbt();
-                if (nbt != null && nbt.containsUuid("frequency")) {
-                    entity.frequency = nbt.getUuid("frequency");
+                Frequential.getFrequency(context.getStack()).ifPresent(frequency -> {
+                    entity.frequency = frequency;
                     entity.markDirty();
-                }
+                });
             }
             if (!context.getWorld().isClient()) {
-                //QCraftData.get(context.getWorld(), true).qBlockLocations.
+                QuantumComputerData.get(context.getWorld()).add(context.getBlockPos(), context.getStack());
             }
             return true;
         }

@@ -2,7 +2,7 @@ package com.acikek.qcraft.block.qblock;
 
 import com.acikek.qcraft.block.quantum_computer.QuantumComputerItem;
 import com.acikek.qcraft.item.Goggles;
-import com.acikek.qcraft.world.state.QCraftData;
+import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.location.QBlockLocation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -31,8 +31,8 @@ public class QBlockItem extends BlockItem {
             return result;
         }
         if (result) {
-            QCraftData data = QCraftData.get(context.getWorld(), true);
-            QBlockLocation added = data.addBlock(getQBlock().type, context.getBlockPos(), context.getStack());
+            QBlockData data = QBlockData.get(context.getWorld(), true);
+            QBlockLocation added = data.add(getQBlock().type, context.getBlockPos(), context.getStack());
             if (added == null) {
                 return false;
             }
@@ -57,8 +57,10 @@ public class QBlockItem extends BlockItem {
     }
 
     public static boolean checkStacks(ItemStack left, ItemStack right) {
-        return !left.isEmpty() && !right.isEmpty()
-                && (QuantumComputerItem.isAvailable(left) && QuantumComputerItem.isAvailable(right))
+        if (left.isEmpty() || right.isEmpty()) {
+            return false;
+        }
+        return (QuantumComputerItem.isAvailable(left) && QuantumComputerItem.isAvailable(right))
                 || (QBlock.getBlockFromItem(left.getItem()).type == QBlock.getBlockFromItem(right.getItem()).type
                     && Arrays.equals(getFaces(left), getFaces(right)));
     }

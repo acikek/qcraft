@@ -30,7 +30,11 @@ public class QCraft implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static Identifier id(String name) {
-        return new Identifier(QCraft.ID, name);
+        return new Identifier(ID, name);
+    }
+
+    public static String uid(String item) {
+        return ID + "_" + item;
     }
 
     @Override

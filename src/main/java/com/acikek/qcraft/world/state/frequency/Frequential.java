@@ -1,6 +1,7 @@
 package com.acikek.qcraft.world.state.frequency;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
@@ -19,6 +20,13 @@ public class Frequential {
     public Frequential(BlockPos pos, Optional<UUID> frequency) {
         this.pos = pos;
         this.frequency = frequency;
+    }
+
+    public static Optional<UUID> getFrequency(ItemStack stack) {
+        NbtCompound stackNbt = stack.getOrCreateNbt();
+        return stackNbt.containsUuid("frequency")
+                ? Optional.of(stackNbt.getUuid("frequency"))
+                : Optional.empty();
     }
 
     public static <T extends Frequential> List<T> parse(Codec<List<T>> codec, NbtCompound nbt, String data) {

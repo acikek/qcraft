@@ -4,7 +4,7 @@ import com.acikek.qcraft.block.qblock.InertQBlock;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import com.acikek.qcraft.recipe.QBlockRecipe;
-import com.acikek.qcraft.world.state.QCraftData;
+import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.frequency.Frequential;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -44,7 +44,7 @@ public class QBlockLocation extends Frequential {
 
     /**
      * Constructs a {@link QBlockLocation}.<br>
-     * To add a location to a {@link QCraftData} instance, see {@link QCraftData#addBlock(QBlock.Type, BlockPos, ItemStack)}.
+     * To add a location to a {@link QBlockData} instance, see {@link QBlockData#add(QBlock.Type, BlockPos, ItemStack)}.
      *
      * @param type      The qBlock's type. This determines its observation behavior.
      * @param pos       The block position of the location.

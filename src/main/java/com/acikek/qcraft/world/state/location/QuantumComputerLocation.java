@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,8 +20,10 @@ public class QuantumComputerLocation extends Frequential {
             .apply(instance, QuantumComputerLocation::new)
     );
 
-    public QuantumComputerLocation(BlockPos pos, Optional<UUID> uuid) {
-        super(pos, uuid);
+    public static final Codec<List<QuantumComputerLocation>> LIST_CODEC = Codec.list(CODEC);
+
+    public QuantumComputerLocation(BlockPos pos, Optional<UUID> frequency) {
+        super(pos, frequency);
     }
 
     public static class Pair extends com.acikek.qcraft.world.state.frequency.Pair<QuantumComputerLocation> {

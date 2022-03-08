@@ -1,7 +1,7 @@
 package com.acikek.qcraft.world;
 
 import com.acikek.qcraft.item.Goggles;
-import com.acikek.qcraft.world.state.QCraftData;
+import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.location.QBlockLocation;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
 
-    public QCraftData data;
+    public QBlockData data;
 
     public static final double PITCH_THRESHOLD = 60.0;
     public static final double YAW_THRESHOLD = 80.0;
@@ -46,9 +46,9 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
     @Override
     public void onStartTick(ServerWorld world) {
         if (data == null) {
-            data = QCraftData.get(world, true);
+            data = QBlockData.get(world, true);
         }
-        if (data.qBlockLocations.locations.isEmpty()) {
+        if (data.locations.list.isEmpty()) {
             return;
         }
         List<QBlockLocation> loadedLocations = data.getLoadedLocations(world);
