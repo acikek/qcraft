@@ -10,6 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -135,6 +136,19 @@ public class QBlockLocation extends Frequential {
         }
         String id = Registry.BLOCK.getId(block).toString();
         return !faces.contains(id);
+    }
+
+    public boolean isPylonBase(QBlock.Face face) {
+        if (type != QBlock.Type.OBSERVER_DEPENDENT) {
+            return false;
+        }
+        for (int i = 0; i < faces.size(); i++) {
+            Block block = getFaceBlock(i);
+            if ((face.index == i && block != Blocks.GOLD_BLOCK) || (face.index != i && block != Blocks.OBSIDIAN)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

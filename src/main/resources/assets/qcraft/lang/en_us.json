@@ -14,7 +14,6 @@
   "item.qcraft.quantum_goggles": "Quantum Goggles",
   "item.qcraft.anti_observation_goggles": "Anti-Observation Goggles",
   "itemGroup.qcraft.main": "qCraft",
-  "command.qcraft.clear_qblocks.success": "Removed %d qBlock(s) from the current world",
   "advancements.qcraft.root.title": "qCraft",
   "advancements.qcraft.root.description": "Welcome to qCraft",
   "advancements.qcraft.observer_dependent_block.title": "To Each Their Own",
@@ -34,5 +33,17 @@
   "advancements.qcraft.quantum_computer_teleport.title": "Efficient Transport",
   "advancements.qcraft.quantum_computer_teleport.description": "Entangle two Quantum Computers and perform Quantum Teleportation",
   "advancements.qcraft.inert_qblock.title": "I Like This Texture",
-  "advancements.qcraft.inert_qblock.description": "Obtain an inert qBlock"
+  "advancements.qcraft.inert_qblock.description": "Obtain an inert qBlock",
+  "command.qcraft.clear_qblocks.success": "Removed %d qBlock(s) from the current world",
+  "face.qcraft.north": "North",
+  "face.qcraft.south": "South",
+  "face.qcraft.east": "East",
+  "face.qcraft.west": "West",
+  "face.qcraft.up": "Up",
+  "face.qcraft.down": "Down",
+  "error.qcraft.pylon_missing.single": "Missing pylon",
+  "error.qcraft.pylon_missing.multiple": "Missing pylons",
+  "error.qcraft.pylon_misaligned": "Invalid pylon height: %s is %d, should be %d",
+  "error.qcraft.pylon_distances": "Differing pylon distances: %s is %d, other's is %d",
+  "error.qcraft.pylon_heights": "Differing pylon heights: %d here, %d for other"
 }
