@@ -13,8 +13,10 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -28,7 +30,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,7 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider {
+public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider, InventoryProvider {
 
     public static final BooleanProperty ENTANGLED = BooleanProperty.of("entangled");
 
@@ -221,13 +225,15 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (hand == Hand.MAIN_HAND) {
+        /*if (hand == Hand.MAIN_HAND) {
             if (!world.isClient()) {
                 teleport(world, pos, player);
             }
             playEffects(world, pos);
         }
-        return super.onUse(state, world, pos, player, hand, hit);
+        return super.onUse(state, world, pos, player, hand, hit);*/
+        player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+        return ActionResult.SUCCESS;
     }
 
     public void remove(World world, BlockPos pos) {
@@ -266,5 +272,17 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new QuantumComputerBlockEntity(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        return blockEntity instanceof NamedScreenHandlerFactory ? (NamedScreenHandlerFactory) blockEntity : null;
+    }
+
+    @Override
+    public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
+        return ((QuantumComputerBlockEntity) world.getBlockEntity(pos));
     }
 }

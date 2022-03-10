@@ -1,43 +1,55 @@
 package com.acikek.qcraft.block.quantum_computer;
 
 import com.acikek.qcraft.block.Blocks;
+import lib.ImplementedInventory;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.SidedInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
-public class QuantumComputerBlockEntity extends BlockEntity {
+public class QuantumComputerBlockEntity extends BlockEntity implements ImplementedInventory, SidedInventory, NamedScreenHandlerFactory {
 
     public static BlockEntityType<QuantumComputerBlockEntity> QUANTUM_COMPUTER_BLOCK_ENTITY;
 
-    public UUID frequency;
+    public final DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
     public QuantumComputerBlockEntity(BlockPos pos, BlockState state) {
         super(QUANTUM_COMPUTER_BLOCK_ENTITY, pos, state);
     }
 
     @Override
+    public DefaultedList<ItemStack> getItems() {
+        return items;
+    }
+
+    @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        if (nbt.containsUuid("frequency")) {
-            frequency = nbt.getUuid("frequency");
-        }
+        Inventories.readNbt(nbt, items);
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
-        if (frequency != null) {
-            nbt.putUuid("frequency", frequency);
-        }
+        Inventories.writeNbt(nbt, items);
         super.writeNbt(nbt);
     }
 
@@ -60,5 +72,34 @@ public class QuantumComputerBlockEntity extends BlockEntity {
                         .create(QuantumComputerBlockEntity::new, Blocks.QUANTUM_COMPUTER)
                         .build(null)
         );
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return new TranslatableText(getCachedState().getBlock().getTranslationKey());
+    }
+
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
+        return new QuantumComputerGuiDescription(syncId, inventory, ScreenHandlerContext.create(world, pos));
+    }
+
+    @Override
+    public int[] getAvailableSlots(Direction side) {
+        int[] result = new int[1];
+        if (!items.get(0).isEmpty()) {
+            result[0] = 1;
+        }
+        return result;
+    }
+
+    @Override
+    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
+        return dir == Direction.UP;
+    }
+
+    @Override
+    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+        return false;
     }
 }
