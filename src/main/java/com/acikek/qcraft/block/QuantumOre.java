@@ -88,7 +88,7 @@ public class QuantumOre extends RedstoneOreBlock {
         super(settings);
     }
 
-    public void spawnParticles(World world, BlockPos pos) {
+    public static void spawnParticles(World world, BlockPos pos) {
         Random random = world.random;
         for (Direction direction : Direction.values()) {
             BlockPos blockPos = pos.offset(direction);

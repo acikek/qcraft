@@ -2,6 +2,7 @@ package com.acikek.qcraft.block.quantum_computer;
 
 import com.acikek.qcraft.advancement.Criteria;
 import com.acikek.qcraft.block.BlockItemProvider;
+import com.acikek.qcraft.block.QuantumOre;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.QuantumComputerData;
@@ -15,6 +16,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.text.MutableText;
@@ -178,6 +181,11 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         }
     }
 
+    public static void playEffects(World world, BlockPos pos) {
+        QuantumOre.spawnParticles(world, pos);
+        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCKS, 3.0f, 1.0f, false);
+    }
+
     public static void teleport(World world, BlockPos pos, PlayerEntity player) {
         QuantumComputerData data = QuantumComputerData.get(world);
         data.locations.get(pos).ifPresent(location -> data.frequencies.ifPresent(location, pair -> {
@@ -206,16 +214,18 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
                 List<BlockState> otherStates = collectStates(world, otherPositions);
                 setStates(world, positions, otherStates);
                 setStates(world, otherPositions, states);
-                int[] dimensions = pylons.getDimensions();
-                Criteria.QUANTUM_TELEPORTATION.trigger((ServerPlayerEntity) player, dimensions);
+                Criteria.QUANTUM_TELEPORTATION.trigger((ServerPlayerEntity) player, pylons.getDimensions());
             }
         }));
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (hand == Hand.MAIN_HAND && !world.isClient()) {
-            teleport(world, pos, player);
+        if (hand == Hand.MAIN_HAND) {
+            if (!world.isClient()) {
+                teleport(world, pos, player);
+            }
+            playEffects(world, pos);
         }
         return super.onUse(state, world, pos, player, hand, hit);
     }
