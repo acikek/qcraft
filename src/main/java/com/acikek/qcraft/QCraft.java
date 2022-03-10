@@ -6,6 +6,7 @@ import com.acikek.qcraft.block.QuantumOre;
 import com.acikek.qcraft.block.quantum_computer.QuantumComputerBlockEntity;
 import com.acikek.qcraft.command.ClearQBlocksCommand;
 import com.acikek.qcraft.item.Items;
+import com.acikek.qcraft.recipe.CoolantCellRefillRecipe;
 import com.acikek.qcraft.recipe.EntangledPairRecipe;
 import com.acikek.qcraft.recipe.QBlockRecipe;
 import com.acikek.qcraft.world.QBlockTickListener;
@@ -46,6 +47,7 @@ public class QCraft implements ModInitializer {
         QuantumComputerBlockEntity.register();
         QBlockRecipe.register();
         EntangledPairRecipe.register();
+        CoolantCellRefillRecipe.register();
         QuantumOre.createFeatures();
         QuantumOre.registerFeatures();
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> new ClearQBlocksCommand().register(dispatcher));

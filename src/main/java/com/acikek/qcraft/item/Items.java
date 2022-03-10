@@ -11,11 +11,13 @@ import java.util.Map;
 public class Items {
 
     public static final Item QUANTUM_DUST = new Item(defaultSettings());
+    public static final Item COOLANT_CELL = new Item(defaultSettings().maxDamage(10));
     public static final QBlockEssence OBSERVATION_ESSENCE = new QBlockEssence(defaultSettings(), Essence.Type.OBSERVATION);
     public static final QBlockEssence SUPERPOSITION_ESSENCE = new QBlockEssence(defaultSettings(), Essence.Type.SUPERPOSITION);
     public static final Essence ENTANGLEMENT_ESSENCE = new Essence(defaultSettings(), Essence.Type.ENTANGLEMENT);
     public static final Goggles QUANTUM_GOGGLES = new Goggles(Goggles.Type.QUANTUM);
     public static final Goggles ANTI_OBSERVATION_GOGGLES = new Goggles(Goggles.Type.ANTI_OBSERVATION);
+
 
     public static FabricItemSettings defaultSettings() {
         return new FabricItemSettings().group(QCraft.ITEM_GROUP);
@@ -25,6 +27,7 @@ public class Items {
 
     static {
         ITEMS.put("quantum_dust", QUANTUM_DUST);
+        ITEMS.put("coolant_cell", COOLANT_CELL);
         ITEMS.put("observation_essence", OBSERVATION_ESSENCE);
         ITEMS.put("superposition_essence", SUPERPOSITION_ESSENCE);
         ITEMS.put("entanglement_essence", ENTANGLEMENT_ESSENCE);

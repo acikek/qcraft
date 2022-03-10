@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "qcraft:item/coolant_cell"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "damage": 1
+      },
+      "model": "qcraft:item/coolant_cell_empty"
+    }
+  ]
+}
