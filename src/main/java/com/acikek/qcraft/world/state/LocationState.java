@@ -25,7 +25,7 @@ public abstract class LocationState<T extends Frequential, P extends Pair<T>> ex
 
     public void fill(List<T> locations, Function<T, P> f) {
         this.locations.list.addAll(locations);
-        //QCraft.LOGGER.info("Loaded " + this.locations.list.size() + " qBlocks");
+        QCraft.LOGGER.info("Loaded " + this.locations.list.size() + " qBlocks");
         frequencies.fill(locations, f);
         //QCraft.LOGGER.info("Loaded " + frequencies.map.size() + " frequencies");
     }

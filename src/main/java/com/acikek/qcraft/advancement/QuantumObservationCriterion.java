@@ -62,12 +62,12 @@ public class QuantumObservationCriterion extends AbstractCriterion<QuantumObserv
 
         @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add("face", face.toJson());
-            jsonObject.add("observation", observation.toJson());
-            jsonObject.add("type", type.toJson());
-            jsonObject.add("entangled", new JsonPrimitive(entangled));
-            return jsonObject;
+            JsonObject obj = super.toJson(predicateSerializer);
+            obj.add("face", face.toJson());
+            obj.add("observation", observation.toJson());
+            obj.add("type", type.toJson());
+            obj.add("entangled", new JsonPrimitive(entangled));
+            return obj;
         }
     }
 }

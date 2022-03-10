@@ -9,11 +9,13 @@ import java.util.List;
 public class Criteria {
 
     public static QuantumObservationCriterion QUANTUM_OBSERVATION = new QuantumObservationCriterion();
+    public static QuantumTeleportationCriterion QUANTUM_TELEPORTATION = new QuantumTeleportationCriterion();
 
     public static List<Criterion<?>> CRITERIA = new ArrayList<>();
 
     static {
         CRITERIA.add(QUANTUM_OBSERVATION);
+        CRITERIA.add(QUANTUM_TELEPORTATION);
     }
 
     public static void registerAll() {

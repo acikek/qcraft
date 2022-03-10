@@ -1,5 +1,6 @@
 package com.acikek.qcraft.block.quantum_computer;
 
+import com.acikek.qcraft.advancement.Criteria;
 import com.acikek.qcraft.block.BlockItemProvider;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.world.state.QBlockData;
@@ -13,6 +14,7 @@ import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.text.MutableText;
@@ -20,13 +22,15 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider {
@@ -51,6 +55,25 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
 
         public Result(Text error) {
             this.error = Optional.of(error);
+        }
+
+        public static class Value {
+
+            public int[] offsets;
+            public int height;
+
+            public Value(int[] offsets, int height) {
+                this.offsets = offsets;
+                this.height = height;
+            }
+
+            public int[] getDimensions() {
+                return new int[] {
+                        offsets[2] + offsets[3],
+                        offsets[0] + offsets[1],
+                        height
+                };
+            }
         }
     }
 
@@ -83,7 +106,7 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         return height;
     }
 
-    public static Result<Pair<int[], Integer>> getPylons(World world, BlockPos pos) {
+    public static Result<Result.Value> getPylons(World world, BlockPos pos) {
         int[] offsets = getPylonOffsets(world, pos);
         MutableText missing = null;
         boolean multiple = false;
@@ -114,28 +137,24 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
                 return new Result<>(new TranslatableText("error.qcraft.pylon_misaligned", face.text, pylonHeight, height));
             }
         }
-        return new Result<>(new Pair<>(offsets, height));
+        return new Result<>(new Result.Value(offsets, height));
     }
 
-    public static Result<Boolean> validateConnection(Pair<int[], Integer> left, Pair<int[], Integer> right) {
-        if (!Objects.equals(left.getRight(), right.getRight())) {
-            return new Result<>(new TranslatableText("error.qcraft.pylon_heights", left.getRight(), right.getRight()));
-        }
-        for (int i = 0; i < left.getLeft().length; i++) {
-            int here = left.getLeft()[i];
-            int other = right.getLeft()[i];
-            if (here != other) {
-                return new Result<>(new TranslatableText("error.qcraft.pylon_distances", QBlock.Face.CARDINALS[i].text, here, other));
+    public static Result<Boolean> validateConnection(Result.Value here, Result.Value other) {
+        for (int i = 0; i < here.offsets.length; i++) {
+            if (here.offsets[i] != other.offsets[i]) {
+                return new Result<>(new TranslatableText("error.qcraft.pylon_distances", QBlock.Face.CARDINALS[i].text, here.offsets[i], other.offsets[i]));
             }
+        }
+        if (here.height != other.height) {
+            return new Result<>(new TranslatableText("error.qcraft.pylon_heights", here.height, other.height));
         }
         return new Result<>(true);
     }
 
-    public static Iterable<BlockPos> collectPositions(BlockPos pos, Pair<int[], Integer> result) {
-        int[] offsets = result.getLeft();
-        int height = result.getRight();
-        BlockPos corner1 = pos.add(offsets[2] - 1, 0, -offsets[0] + 1);
-        BlockPos corner2 = pos.add(-offsets[3] + 1, height - 1, offsets[1] - 1);
+    public static Iterable<BlockPos> collectPositions(BlockPos pos, Result.Value result) {
+        BlockPos corner1 = pos.add(result.offsets[2] - 1, 0, -result.offsets[0] + 1);
+        BlockPos corner2 = pos.add(-result.offsets[3] + 1, result.height - 1, result.offsets[1] - 1);
         return BlockPos.iterate(corner1, corner2);
     }
 
@@ -164,27 +183,31 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         data.locations.get(pos).ifPresent(location -> data.frequencies.ifPresent(location, pair -> {
             QuantumComputerLocation other = pair.getOther(location);
             if (other != null) {
-                Result<Pair<int[], Integer>> pylons = getPylons(world, location.pos);
-                if (pylons.error.isPresent()) {
-                    player.sendMessage(pylons.error.get(), false);
+                Result<Result.Value> result = getPylons(world, location.pos);
+                if (result.error.isPresent()) {
+                    player.sendMessage(result.error.get(), false);
                     return;
                 }
-                Result<Pair<int[], Integer>> otherPylons = getPylons(world, other.pos);
-                if (otherPylons.error.isPresent()) {
-                    player.sendMessage(otherPylons.error.get(), false);
+                Result<Result.Value> otherResult = getPylons(world, other.pos);
+                if (otherResult.error.isPresent()) {
+                    player.sendMessage(otherResult.error.get(), false);
                     return;
                 }
-                Result<Boolean> valid = validateConnection(pylons.value.get(), otherPylons.value.get());
+                Result.Value pylons = result.value.get();
+                Result.Value otherPylons = otherResult.value.get();
+                Result<Boolean> valid = validateConnection(pylons, otherPylons);
                 if (valid.error.isPresent()) {
                     player.sendMessage(valid.error.get(), false);
                     return;
                 }
-                Iterable<BlockPos> positions = collectPositions(location.pos, pylons.value.get());
-                Iterable<BlockPos> otherPositions = collectPositions(other.pos, otherPylons.value.get());
+                Iterable<BlockPos> positions = collectPositions(location.pos, pylons);
+                Iterable<BlockPos> otherPositions = collectPositions(other.pos, otherPylons);
                 List<BlockState> states = collectStates(world, positions);
                 List<BlockState> otherStates = collectStates(world, otherPositions);
                 setStates(world, positions, otherStates);
                 setStates(world, otherPositions, states);
+                int[] dimensions = pylons.getDimensions();
+                Criteria.QUANTUM_TELEPORTATION.trigger((ServerPlayerEntity) player, dimensions);
             }
         }));
     }
