@@ -34,8 +34,7 @@ public class QuantumComputerGuiDescription extends SyncedGuiDescription {
                 .setFilter(stack -> stack.isOf(Items.COOLANT_CELL))
                 .setIcon(new TextureIcon(QCraft.id("textures/gui/coolant_cell_slot.png")));
         root.add(itemSlot, 4, 1);
-        root.add(STATUS_FAILURE, 1, 1);
-        root.add(STATUS_SUCCESS, 2, 1);
+        //WButton energize = new WButton().setLabel(new TranslatableText("gui.qcraft.energize")).
         root.add(createPlayerInventoryPanel(), 0, 3);
         root.validate(this);
     }

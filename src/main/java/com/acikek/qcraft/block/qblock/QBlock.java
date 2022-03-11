@@ -22,7 +22,7 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
         OBSERVER_DEPENDENT("observer_dependent_block"),
         QUANTUM("quantum_block");
 
-        public static final Codec<Type> CODEC = Codec.STRING.comapFlatMap(Type::validate, Type::getId);
+        public static final Codec<Type> CODEC = Codec.STRING.comapFlatMap(Type::validate, type -> type.id);
 
         public static DataResult<Type> validate(String id) {
             return switch (id) {
@@ -64,10 +64,6 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
 
         Type(String id) {
             this.id = id;
-        }
-
-        public String getId() {
-            return resolveBlock().type.id;
         }
     }
 

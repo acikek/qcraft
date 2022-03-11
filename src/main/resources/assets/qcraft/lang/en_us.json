@@ -42,11 +42,11 @@
   "face.qcraft.west": "West",
   "face.qcraft.up": "Up",
   "face.qcraft.down": "Down",
-  "error.qcraft.pylon_missing.single": "Missing pylon",
-  "error.qcraft.pylon_missing.multiple": "Missing pylons",
-  "error.qcraft.pylon_misaligned": "Invalid pylon height: %s is %d, should be %d",
-  "error.qcraft.pylon_distances": "Differing pylon distances: %s is %d, counterpart's is %d",
-  "error.qcraft.pylon_heights": "Differing pylon heights: %d here, %d at counterpart",
+  "error.qcraft.pylon_missing.single": "Incomplete pylon system",
+  "error.qcraft.pylon_misaligned": "Misaligned pylon heights",
+  "error.qcraft.pylon_distances": "Pylon distances with counterpart differ",
+  "error.qcraft.pylon_heights": "Pylon heights with counterpart differ",
   "error.qcraft.missing_counterpart": "Entangled counterpart not found",
-  "error.qcraft.errored_counterpart": "Entangled counterpart has errors"
+  "error.qcraft.errored_counterpart": "Entangled counterpart is errored",
+  "gui.qcraft.energize": "Energize"
 }
