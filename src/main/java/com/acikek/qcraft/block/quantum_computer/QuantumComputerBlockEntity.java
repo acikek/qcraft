@@ -34,6 +34,8 @@ public class QuantumComputerBlockEntity extends BlockEntity implements Implement
 
     public final DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
+    public QuantumComputer.Result<QuantumComputer.Result.Teleportation> result;
+
     public QuantumComputerBlockEntity(BlockPos pos, BlockState state) {
         super(QUANTUM_COMPUTER_BLOCK_ENTITY, pos, state);
     }
@@ -83,7 +85,7 @@ public class QuantumComputerBlockEntity extends BlockEntity implements Implement
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
-        return new QuantumComputerGuiDescription(syncId, inventory, ScreenHandlerContext.create(world, pos));
+        return new QuantumComputerGuiDescription(syncId, inventory, ScreenHandlerContext.create(world, pos), result);
     }
 
     @Override
@@ -107,6 +109,13 @@ public class QuantumComputerBlockEntity extends BlockEntity implements Implement
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        if (result != null) {
+            buf.encode(QuantumComputer.Result.CODEC, result);
+        }
+    }
 
+    @Override
+    public int getMaxCountPerStack() {
+        return 1;
     }
 }

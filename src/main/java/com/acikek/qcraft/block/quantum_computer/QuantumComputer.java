@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -40,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider, InventoryProvider {
@@ -57,8 +59,8 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
 
         public enum Error {
 
-            MISSING_PYLONS("missing_pylons"),
-            MISALIGNED("misaligned"),
+            MISSING_PYLONS("pylon_missing"),
+            MISALIGNED("pylon_misaligned"),
             PYLON_DISTANCES("pylon_distances"),
             PYLON_HEIGHTS("pylon_heights"),
             MISSING_COUNTERPART("missing_counterpart"),
@@ -68,8 +70,8 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
 
             public static DataResult<Error> validate(String id) {
                 return switch (id) {
-                    case "missing_pylons" -> DataResult.success(MISSING_PYLONS);
-                    case "misaligned" -> DataResult.success(MISALIGNED);
+                    case "pylon_missing" -> DataResult.success(MISSING_PYLONS);
+                    case "pylon_misaligned" -> DataResult.success(MISALIGNED);
                     case "pylon_distances" -> DataResult.success(PYLON_DISTANCES);
                     case "pylon_heights" -> DataResult.success(PYLON_HEIGHTS);
                     case "missing_counterpart" -> DataResult.success(MISSING_COUNTERPART);
@@ -85,7 +87,7 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
             }
 
             public Text getText() {
-                return new TranslatableText("error." + QCraft.ID + "." + id);
+                return new TranslatableText("gui." + QCraft.ID + ".error." + id);
             }
         }
 
@@ -170,6 +172,11 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
                 super(here, other);
                 this.start = start;
                 this.end = end;
+            }
+
+            public void toBoth(Consumer<BlockPos> consumer) {
+                consumer.accept(start);
+                consumer.accept(end);
             }
 
             public static Result<Teleportation> fromConnection(Result<Connection> result, BlockPos start, BlockPos end) {
@@ -273,9 +280,13 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         }
     }
 
+    public static void playSound(World world, BlockPos pos, SoundEvent sound) {
+        world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.BLOCKS, 3.0f, 1.0f, false);
+    }
+
     public static void playEffects(World world, BlockPos pos) {
         QuantumOre.spawnParticles(world, pos);
-        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCKS, 3.0f, 1.0f, false);
+        playSound(world, pos, SoundEvents.ENTITY_ENDERMAN_TELEPORT);
     }
 
     public static Result<Result.Teleportation> getConnection(World world, BlockPos pos) {
@@ -316,22 +327,19 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         List<BlockState> otherStates = collectStates(world, otherPositions);
         setStates(world, positions, otherStates);
         setStates(world, otherPositions, states);
+        teleportation.toBoth(pos -> playEffects(world, pos));
         Criteria.QUANTUM_TELEPORTATION.trigger((ServerPlayerEntity) player, teleportation.here.getDimensions());
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (hand == Hand.MAIN_HAND) {
-            if (!world.isClient()) {
-                Result<Result.Teleportation> connection = getConnection(world, pos);
-                connection.error.ifPresent(error -> player.sendMessage(error.getText(), false));
-                connection.value.ifPresent(teleportation -> teleport(world, player, teleportation));
+            if (!world.isClient() && world.getBlockEntity(pos) instanceof QuantumComputerBlockEntity blockEntity) {
+                blockEntity.result = getConnection(world, pos);
             }
-            playEffects(world, pos);
+            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
         }
-        return super.onUse(state, world, pos, player, hand, hit);
-        //player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
-        //return ActionResult.SUCCESS;
+        return ActionResult.SUCCESS;
     }
 
     public void remove(World world, BlockPos pos) {
@@ -376,7 +384,7 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
     @Override
     public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        return blockEntity instanceof NamedScreenHandlerFactory ? (NamedScreenHandlerFactory) blockEntity : null;
+        return blockEntity instanceof NamedScreenHandlerFactory named ? named : null;
     }
 
     @Override

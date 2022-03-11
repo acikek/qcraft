@@ -8,7 +8,6 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
@@ -84,7 +83,6 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
         public final int slot;
         public final int index;
         public final Direction direction;
-        public final TranslatableText text = new TranslatableText("face.qcraft." + toString().toLowerCase());
 
         Face(int slot, int index, Direction direction) {
             this.slot = slot;
