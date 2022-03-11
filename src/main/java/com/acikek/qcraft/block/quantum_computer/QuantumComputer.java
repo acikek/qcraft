@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
 public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider, InventoryProvider {
@@ -64,6 +65,26 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
             this.error = Optional.of(error);
         }
 
+        public static Result<Value> missingPylons(MutableText missing, boolean multiple) {
+            String error = "error.qcraft.pylon_missing." + (multiple ? "multiple" : "single");
+            return new Result<>(new TranslatableText(error).append(": ").append(missing));
+        }
+
+        public static Result<Value> misaligned(TranslatableText text, int height, int otherHeight) {
+            return new Result<>(new TranslatableText("error.qcraft.misaligned", text, height, otherHeight));
+        }
+
+        public static Result<Connection> pylonDistances(TranslatableText text, int offset, int otherOffset) {
+            return new Result<>(new TranslatableText("error.qcraft.pylon_distances", text, offset, otherOffset));
+        }
+
+        public static Result<Connection> pylonHeights(int height, int otherHeight) {
+            return new Result<>(new TranslatableText("error.qcraft.pylon_heights", height, otherHeight));
+        }
+
+        public static Result<Teleportation> MISSING_COUNTERPART = new Result<>(new TranslatableText("error.qcraft.missing_counterpart"));
+        public static Result<Teleportation> ERRORED_COUNTERPART = new Result<>(new TranslatableText("error.qcraft.errored_counterpart"));
+
         public static class Value {
 
             public int[] offsets;
@@ -80,6 +101,42 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
                         offsets[0] + offsets[1],
                         height
                 };
+            }
+        }
+
+        public static class Connection {
+
+            public Value here;
+            public Value other;
+
+            public Connection(Value here, Value other) {
+                this.here = here;
+                this.other = other;
+            }
+        }
+
+        public static class Teleportation extends Connection {
+
+            public BlockPos start;
+            public BlockPos end;
+            public int[] dimensions;
+
+            public Teleportation(Value here, Value other, BlockPos start, BlockPos end, int[] dimensions) {
+                super(here, other);
+                this.start = start;
+                this.end = end;
+                this.dimensions = dimensions;
+            }
+
+            public static Result<Teleportation> fromConnection(Result<Connection> result, BlockPos start, BlockPos end, int[] dimensions) {
+                if (result.error.isPresent()) {
+                    return new Result<>(result.error.get());
+                }
+                else if (result.value.isPresent()) {
+                    Connection connection = result.value.get();
+                    return new Result<>(new Teleportation(connection.here, connection.other, start, end, dimensions));
+                }
+                return null;
             }
         }
     }
@@ -130,8 +187,7 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
             }
         }
         if (missing != null) {
-            String error = "error.qcraft.pylon_missing." + (multiple ? "multiple" : "single");
-            return new Result<>(new TranslatableText(error).append(": ").append(missing));
+            return Result.missingPylons(missing, multiple);
         }
         int height = 0;
         for (int i = 0; i < offsets.length; i++) {
@@ -141,22 +197,22 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
                 height = pylonHeight;
             }
             else if (height != pylonHeight) {
-                return new Result<>(new TranslatableText("error.qcraft.pylon_misaligned", face.text, pylonHeight, height));
+                return Result.misaligned(face.text, pylonHeight, height);
             }
         }
         return new Result<>(new Result.Value(offsets, height));
     }
 
-    public static Result<Boolean> validateConnection(Result.Value here, Result.Value other) {
+    public static Result<Result.Connection> validateConnection(Result.Value here, Result.Value other) {
         for (int i = 0; i < here.offsets.length; i++) {
             if (here.offsets[i] != other.offsets[i]) {
-                return new Result<>(new TranslatableText("error.qcraft.pylon_distances", QBlock.Face.CARDINALS[i].text, here.offsets[i], other.offsets[i]));
+                return Result.pylonDistances(QBlock.Face.CARDINALS[i].text, here.offsets[i], other.offsets[i]);
             }
         }
         if (here.height != other.height) {
-            return new Result<>(new TranslatableText("error.qcraft.pylon_heights", here.height, other.height));
+            return Result.pylonHeights(here.height, other.height);
         }
-        return new Result<>(true);
+        return new Result<>(new Result.Connection(here, other));
     }
 
     public static Iterable<BlockPos> collectPositions(BlockPos pos, Result.Value result) {
@@ -190,50 +246,61 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.BLOCKS, 3.0f, 1.0f, false);
     }
 
-    public static void teleport(World world, BlockPos pos, PlayerEntity player) {
+    public static Result<Result.Teleportation> getConnection(World world, BlockPos pos) {
         QuantumComputerData data = QuantumComputerData.get(world);
+        AtomicReference<Result<Result.Teleportation>> connection = new AtomicReference<>();
         data.locations.get(pos).ifPresent(location -> data.frequencies.ifPresent(location, pair -> {
             QuantumComputerLocation other = pair.getOther(location);
-            if (other != null) {
-                Result<Result.Value> result = getPylons(world, location.pos);
-                if (result.error.isPresent()) {
-                    player.sendMessage(result.error.get(), false);
-                    return;
-                }
-                Result<Result.Value> otherResult = getPylons(world, other.pos);
-                if (otherResult.error.isPresent()) {
-                    player.sendMessage(otherResult.error.get(), false);
-                    return;
-                }
-                Result.Value pylons = result.value.get();
-                Result.Value otherPylons = otherResult.value.get();
-                Result<Boolean> valid = validateConnection(pylons, otherPylons);
-                if (valid.error.isPresent()) {
-                    player.sendMessage(valid.error.get(), false);
-                    return;
-                }
-                Iterable<BlockPos> positions = collectPositions(location.pos, pylons);
-                Iterable<BlockPos> otherPositions = collectPositions(other.pos, otherPylons);
-                List<BlockState> states = collectStates(world, positions);
-                List<BlockState> otherStates = collectStates(world, otherPositions);
-                setStates(world, positions, otherStates);
-                setStates(world, otherPositions, states);
-                Criteria.QUANTUM_TELEPORTATION.trigger((ServerPlayerEntity) player, pylons.getDimensions());
+            if (other == null) {
+                connection.set(Result.MISSING_COUNTERPART);
+                return;
             }
+            Result<Result.Value> result = getPylons(world, location.pos);
+            if (result.error.isPresent()) {
+                connection.set(new Result<>(result.error.get()));
+                return;
+            }
+            Result<Result.Value> otherResult = getPylons(world, other.pos);
+            if (otherResult.error.isPresent()) {
+                connection.set(Result.ERRORED_COUNTERPART);
+                return;
+            }
+            if (result.value.isEmpty() || otherResult.value.isEmpty()) {
+                return;
+            }
+            connection.set(Result.Teleportation.fromConnection(
+                    validateConnection(result.value.get(), otherResult.value.get()),
+                    location.pos,
+                    other.pos,
+                    result.value.get().getDimensions())
+            );
         }));
+        return connection.get();
+    }
+
+    public static void teleport(World world, PlayerEntity player, Result.Teleportation teleportation) {
+        Iterable<BlockPos> positions = collectPositions(teleportation.start, teleportation.here);
+        Iterable<BlockPos> otherPositions = collectPositions(teleportation.end, teleportation.other);
+        List<BlockState> states = collectStates(world, positions);
+        List<BlockState> otherStates = collectStates(world, otherPositions);
+        setStates(world, positions, otherStates);
+        setStates(world, otherPositions, states);
+        Criteria.QUANTUM_TELEPORTATION.trigger((ServerPlayerEntity) player, teleportation.dimensions);
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        /*if (hand == Hand.MAIN_HAND) {
+        if (hand == Hand.MAIN_HAND) {
             if (!world.isClient()) {
-                teleport(world, pos, player);
+                Result<Result.Teleportation> connection = getConnection(world, pos);
+                connection.error.ifPresent(error -> player.sendMessage(error, false));
+                connection.value.ifPresent(teleportation -> teleport(world, player, teleportation));
             }
             playEffects(world, pos);
         }
-        return super.onUse(state, world, pos, player, hand, hit);*/
-        player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
-        return ActionResult.SUCCESS;
+        return super.onUse(state, world, pos, player, hand, hit);
+        //player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+        //return ActionResult.SUCCESS;
     }
 
     public void remove(World world, BlockPos pos) {

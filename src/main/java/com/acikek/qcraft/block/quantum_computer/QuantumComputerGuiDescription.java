@@ -6,6 +6,7 @@ import com.acikek.qcraft.item.Items;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
+import io.github.cottonmc.cotton.gui.widget.WSprite;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
@@ -20,6 +21,9 @@ public class QuantumComputerGuiDescription extends SyncedGuiDescription {
 
     public static final int SIZE = 1;
 
+    public static final WSprite STATUS_FAILURE = new WSprite(QCraft.id("textures/gui/warning_indicator.png"));
+    public static final WSprite STATUS_SUCCESS = new WSprite(QCraft.id("textures/gui/checkmark_indicator.png"));
+
     public QuantumComputerGuiDescription(int syncId, PlayerInventory inventory, ScreenHandlerContext context) {
         super(SCREEN_HANDLER_TYPE, syncId, inventory, getBlockInventory(context, SIZE), getBlockPropertyDelegate(context));
         WGridPanel root = new WGridPanel();
@@ -30,6 +34,8 @@ public class QuantumComputerGuiDescription extends SyncedGuiDescription {
                 .setFilter(stack -> stack.isOf(Items.COOLANT_CELL))
                 .setIcon(new TextureIcon(QCraft.id("textures/gui/coolant_cell_slot.png")));
         root.add(itemSlot, 4, 1);
+        root.add(STATUS_FAILURE, 1, 1);
+        root.add(STATUS_SUCCESS, 2, 1);
         root.add(createPlayerInventoryPanel(), 0, 3);
         root.validate(this);
     }
