@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "qcraft:quantum_dust_block"
+    }
+  ],
+  "result": {
+    "item": "qcraft:quantum_dust_block",
+    "count": 9
+  }
+}

@@ -3,6 +3,8 @@
   "values": [
     "qcraft:quantum_ore",
     "qcraft:deepslate_quantum_ore",
-    "qcraft:quantum_computer"
+    "qcraft:quantum_computer",
+    "qcraft:inert_observer_dependent_block",
+    "qcraft:inert_quantum_block"
   ]
 }

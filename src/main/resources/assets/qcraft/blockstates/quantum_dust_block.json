@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "qcraft:block/quantum_dust_block"
+    }
+  }
+}

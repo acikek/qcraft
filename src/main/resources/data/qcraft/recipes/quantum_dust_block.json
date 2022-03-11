@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DDD",
+    "DDD",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "item": "qcraft:quantum_dust"
+    }
+  },
+  "result": {
+    "item": "qcraft:quantum_dust_block",
+    "count": 1
+  }
+}

@@ -1,6 +1,7 @@
 {
   "block.qcraft.quantum_ore": "Quantum Ore",
   "block.qcraft.deepslate_quantum_ore": "Deepslate Quantum Ore",
+  "block.qcraft.quantum_dust_block": "Quantum Dust Block",
   "block.qcraft.inert_observer_dependent_block": "Inert Observer-Dependent Block",
   "block.qcraft.inert_quantum_block": "Inert Quantum Block",
   "block.qcraft.observer_dependent_block": "Observer-Dependent Block",
