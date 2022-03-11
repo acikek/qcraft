@@ -1,8 +1,10 @@
 package com.acikek.qcraft.world.state.location;
 
+import com.acikek.qcraft.block.Blocks;
 import com.acikek.qcraft.world.state.frequency.Frequential;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.BlockPos;
 
@@ -24,6 +26,15 @@ public class QuantumComputerLocation extends Frequential {
 
     public QuantumComputerLocation(BlockPos pos, Optional<UUID> frequency) {
         super(pos, frequency);
+    }
+
+    /**
+     * @return The stack with frequency applied, if any.
+     */
+    public ItemStack getItemStack() {
+        ItemStack stack = new ItemStack(Blocks.QUANTUM_COMPUTER);
+        frequency.ifPresent(f -> stack.getOrCreateNbt().putUuid("frequency", f));
+        return stack;
     }
 
     public static class Pair extends com.acikek.qcraft.world.state.frequency.Pair<QuantumComputerLocation> {

@@ -20,13 +20,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -46,13 +46,10 @@ import java.util.stream.Collectors;
 
 public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider, InventoryProvider {
 
-    public static final BooleanProperty ENTANGLED = BooleanProperty.of("entangled");
-
     public static final Settings DEFAULT_SETTINGS = FabricBlockSettings.of(Material.METAL).strength(5.0f, 10.0f);
 
     public QuantumComputer() {
         super(DEFAULT_SETTINGS);
-        setDefaultState(getStateManager().getDefaultState().with(ENTANGLED, false));
     }
 
     public static class Result<T> {
@@ -345,13 +342,28 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
     public void remove(World world, BlockPos pos) {
         if (!world.isClient()) {
             QuantumComputerData data = QuantumComputerData.get(world);
-            data.locations.get(pos).ifPresent(location -> data.remove(location, false));
+            data.locations.get(pos).ifPresent(location -> data.remove(location, true));
         }
+    }
+
+    @Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
+        List<ItemStack> result = new ArrayList<>();
+        if (!builder.getWorld().isClient()) {
+            QuantumComputerLocation location = QuantumComputerData.get(builder.getWorld()).locations.removed;
+            if (location != null) {
+                result.add(location.getItemStack());
+            }
+        }
+        return result;
     }
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         super.onBreak(world, pos, state, player);
+        if (world.getBlockEntity(pos) instanceof QuantumComputerBlockEntity blockEntity) {
+            dropStack(world, pos, blockEntity.getStack(0));
+        }
         remove(world, pos);
     }
 
@@ -363,11 +375,6 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
     @Override
     public PistonBehavior getPistonBehavior(BlockState state) {
         return PistonBehavior.BLOCK;
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(ENTANGLED);
     }
 
     @Override
