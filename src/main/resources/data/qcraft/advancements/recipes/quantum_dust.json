@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "qcraft:quantum_dust"
+    ]
+  },
+  "criteria": {
+    "has_quantum_dust": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "qcraft:quantum_dust"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "qcraft:quantum_dust"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_quantum_dust",
+      "has_the_recipe"
+    ]
+  ]
+}
