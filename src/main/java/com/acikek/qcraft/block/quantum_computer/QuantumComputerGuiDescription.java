@@ -31,14 +31,14 @@ public class QuantumComputerGuiDescription extends SyncedGuiDescription {
 
     public static final Identifier ENERGIZE = QCraft.id("gui.energize");
 
-    public void addStatus(WGridPanel root, WSprite sprite, Text text) {
-        root.add(sprite, 0, 1);
-        root.add(new WText(text), 1, 1, 8, 1);
+    public void addStatus(WPlainPanel root, WSprite sprite, Text text) {
+        root.add(sprite, 0, 18, 18, 18);
+        root.add(new WText(text), 27, 18, 135, 9);
     }
 
     public QuantumComputerGuiDescription(int syncId, PlayerInventory inventory, ScreenHandlerContext context, QuantumComputer.Result<QuantumComputer.Result.Teleportation> result) {
         super(SCREEN_HANDLER_TYPE, syncId, inventory, getBlockInventory(context, SIZE), getBlockPropertyDelegate(context));
-        WGridPanel root = new WGridPanel();
+        WPlainPanel root = new WPlainPanel();
         setRootPanel(root);
         root.setSize(175, 150);
         root.setInsets(Insets.ROOT_PANEL);
@@ -65,9 +65,9 @@ public class QuantumComputerGuiDescription extends SyncedGuiDescription {
             ItemStack stack = blockInventory.getStack(0);
             stack.setDamage(stack.getDamage() + 1);
         });
-        root.add(itemSlot, 4, 3);
-        root.add(energize, 0, 3, 3, 1);
-        root.add(createPlayerInventoryPanel(), 0, 5);
+        root.add(itemSlot, 0, 46);
+        root.add(energize, 36, 45, 108, 20);
+        root.add(createPlayerInventoryPanel(), 0, 72);
         root.validate(this);
     }
 
