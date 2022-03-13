@@ -6,12 +6,23 @@ import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.location.QBlockLocation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class QBlockItem extends BlockItem {
 
@@ -63,5 +74,27 @@ public class QBlockItem extends BlockItem {
         return (QuantumComputerItem.isAvailable(left) && QuantumComputerItem.isAvailable(right))
                 || (QBlock.getBlockFromItem(left.getItem()).type == QBlock.getBlockFromItem(right.getItem()).type
                     && Arrays.equals(getFaces(left), getFaces(right)));
+    }
+
+    public static MutableText formatFace(MutableText face, MutableText block) {
+        block.setStyle(block.getStyle().withItalic(false)).formatted(Formatting.GRAY);
+        MutableText faceText = new LiteralText(" (").append(face).append(")")
+                .setStyle(Style.EMPTY.withItalic(false))
+                .formatted(Formatting.DARK_GRAY);
+        block.append(faceText);
+        return block;
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        String[] faces = getFaces(stack);
+        if (faces == null) {
+            return;
+        }
+        for (int i = 0; i < faces.length; i++) {
+            MutableText face = QBlock.Face.values()[i].text;
+            MutableText block = Registry.BLOCK.get(Identifier.tryParse(faces[i])).getName();
+            tooltip.add(formatFace(face, block));
+        }
     }
 }

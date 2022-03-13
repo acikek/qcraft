@@ -8,6 +8,8 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
@@ -73,21 +75,23 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
 
     public enum Face {
 
-        UP(0, 0, Direction.UP),
-        NORTH(1, 1, Direction.NORTH),
-        WEST(3, 2, Direction.WEST),
-        EAST(5, 3, Direction.EAST),
-        DOWN(6, 4, Direction.DOWN),
-        SOUTH(7, 5, Direction.SOUTH);
+        UP(0, 0, Direction.UP, "up"),
+        NORTH(1, 1, Direction.NORTH, "north"),
+        WEST(3, 2, Direction.WEST, "west"),
+        EAST(5, 3, Direction.EAST, "east"),
+        DOWN(6, 4, Direction.DOWN, "down"),
+        SOUTH(7, 5, Direction.SOUTH, "south");
 
         public final int slot;
         public final int index;
         public final Direction direction;
+        public final MutableText text;
 
-        Face(int slot, int index, Direction direction) {
+        Face(int slot, int index, Direction direction, String name) {
             this.slot = slot;
             this.index = index;
             this.direction = direction;
+            text = new TranslatableText("face.qcraft." + name);
         }
 
         public Face getOpposite() {
