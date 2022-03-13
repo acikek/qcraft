@@ -61,6 +61,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
         if (loadedLocations.isEmpty()) {
             return;
         }
+        List<QBlockLocation> observed = new ArrayList<>();
         List<QBlockLocation> unobservationQueue = new ArrayList<>();
         for (PlayerEntity player : world.getPlayers()) {
             if (Goggles.isWearingGoggles(player, Goggles.Type.ANTI_OBSERVATION)) {
@@ -77,6 +78,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
                 double betweenPitch = getPitch(between);
                 double pitchDiff = getPitchDifference(player.getPitch(), betweenPitch, yawDiff);
                 if (isObserved(pitchDiff, yawDiff, player.getPitch())) {
+                    observed.add(location);
                     if (unobservationQueue.contains(location)) {
                         unobservationQueue.remove(location);
                     }
@@ -84,7 +86,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
                         data.observe(location, world, player);
                     }
                 }
-                else if (location.observed && data.canBeUnobserved(location, center)) {
+                else if (location.observed && data.canBeUnobserved(location, center) && !observed.contains(location)) {
                     unobservationQueue.add(location);
                 }
             }
