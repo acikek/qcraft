@@ -5,6 +5,7 @@ import com.acikek.qcraft.advancement.Criteria;
 import com.acikek.qcraft.block.BlockItemProvider;
 import com.acikek.qcraft.block.QuantumOre;
 import com.acikek.qcraft.block.qblock.QBlock;
+import com.acikek.qcraft.sound.Sounds;
 import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.QuantumComputerData;
 import com.acikek.qcraft.world.state.location.QBlockLocation;
@@ -24,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -46,7 +48,19 @@ import java.util.stream.Collectors;
 
 public class QuantumComputer extends Block implements BlockItemProvider, BlockEntityProvider, InventoryProvider {
 
-    public static final Settings DEFAULT_SETTINGS = FabricBlockSettings.of(Material.METAL).strength(5.0f, 10.0f);
+    public static final BlockSoundGroup SOUND_GROUP = new BlockSoundGroup(
+            1.0f,
+            1.0f,
+            Sounds.QUANTUM_COMPUTER_BREAK,
+            SoundEvents.BLOCK_METAL_STEP,
+            Sounds.QUANTUM_COMPUTER_PLACE,
+            SoundEvents.BLOCK_METAL_HIT,
+            SoundEvents.BLOCK_METAL_FALL
+    );
+
+    public static final Settings DEFAULT_SETTINGS = FabricBlockSettings.of(Material.METAL)
+            .strength(5.0f, 10.0f)
+            .sounds(SOUND_GROUP);
 
     public QuantumComputer() {
         super(DEFAULT_SETTINGS);
@@ -285,7 +299,7 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
 
     public static void playEffects(World world, BlockPos pos) {
         QuantumOre.spawnParticles(world, pos);
-        playSound(world, pos, SoundEvents.ENTITY_ENDERMAN_TELEPORT);
+        playSound(world, pos, net.minecraft.sound.SoundEvents.ENTITY_ENDERMAN_TELEPORT);
     }
 
     public static Result<Result.Teleportation> getConnection(World world, BlockPos pos) {

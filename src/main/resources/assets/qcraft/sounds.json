@@ -1,0 +1,20 @@
+{
+  "block.quantum_computer.place": {
+    "subtitle": "subtitles.qcraft.quantum_computer.place",
+    "sounds": [
+      "qcraft:slosh1",
+      "qcraft:slosh2",
+      "qcraft:slosh3",
+      "qcraft:slosh4"
+    ]
+  },
+  "block.quantum_computer.break": {
+    "subtitle": "subtitles.qcraft.quantum_computer.break",
+    "sounds": [
+      "qcraft:slosh_empty1",
+      "qcraft:slosh_empty2",
+      "qcraft:slosh_empty3",
+      "qcraft:slosh_empty4"
+    ]
+  }
+}

@@ -10,6 +10,7 @@ import com.acikek.qcraft.item.Items;
 import com.acikek.qcraft.recipe.CoolantCellRefillRecipe;
 import com.acikek.qcraft.recipe.EntangledPairRecipe;
 import com.acikek.qcraft.recipe.QBlockRecipe;
+import com.acikek.qcraft.sound.Sounds;
 import com.acikek.qcraft.world.QBlockTickListener;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -42,15 +43,16 @@ public class QCraft implements ModInitializer {
     @Override
     public void onInitialize() {
         QCraft.LOGGER.info("Initializing qCraft");
+        Sounds.registerAll();
         Blocks.registerAll();
         Items.registerAll();
         Criteria.registerAll();
-        QuantumComputerBlockEntity.register();
         QBlockRecipe.register();
         EntangledPairRecipe.register();
         CoolantCellRefillRecipe.register();
         QuantumOre.createFeatures();
         QuantumOre.registerFeatures();
+        QuantumComputerBlockEntity.register();
         QuantumComputerGuiDescription.register();
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> new ClearQBlocksCommand().register(dispatcher));
         ServerTickEvents.START_WORLD_TICK.register(new QBlockTickListener());
