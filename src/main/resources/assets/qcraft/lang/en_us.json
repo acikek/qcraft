@@ -52,6 +52,6 @@
   "gui.qcraft.error.errored_counterpart": "Entangled counterpart is errored",
   "gui.qcraft.success.quantum_computer": "All systems operational",
   "gui.qcraft.energize": "Energize",
-  "subtitles.qcraft.quantum_computer.place": "Quantum Block placed",
-  "subtitles.qcraft.quantum_computer.break": "Quantum Block broken"
+  "subtitles.qcraft.quantum_computer.place": "Quantum Computer placed",
+  "subtitles.qcraft.quantum_computer.break": "Quantum Computer broken"
 }
