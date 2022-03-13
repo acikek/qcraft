@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
@@ -43,6 +44,11 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
         return pitchDiff < PITCH_THRESHOLD && (viewportIntersectsYAxis || yawDiff < YAW_THRESHOLD);
     }
 
+    // TODO
+    public boolean viewUnobstructed(ServerWorld world, PlayerEntity player, QBlockLocation location) {
+        return true;
+    }
+
     @Override
     public void onStartTick(ServerWorld world) {
         if (data == null) {
@@ -55,6 +61,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
         if (loadedLocations.isEmpty()) {
             return;
         }
+        List<QBlockLocation> unobservationQueue = new ArrayList<>();
         for (PlayerEntity player : world.getPlayers()) {
             if (Goggles.isWearingGoggles(player, Goggles.Type.ANTI_OBSERVATION)) {
                 return;
@@ -70,14 +77,20 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
                 double betweenPitch = getPitch(between);
                 double pitchDiff = getPitchDifference(player.getPitch(), betweenPitch, yawDiff);
                 if (isObserved(pitchDiff, yawDiff, player.getPitch())) {
-                    if (!location.observed && data.getOtherNotObserved(location)) {
+                    if (unobservationQueue.contains(location)) {
+                        unobservationQueue.remove(location);
+                    }
+                    else if (!location.observed && data.getOtherNotObserved(location)) {
                         data.observe(location, world, player);
                     }
                 }
                 else if (location.observed && data.canBeUnobserved(location, center)) {
-                    data.unobserve(location, world, true);
+                    unobservationQueue.add(location);
                 }
             }
+        }
+        for (QBlockLocation location : unobservationQueue) {
+            data.unobserve(location, world, true);
         }
     }
 }
