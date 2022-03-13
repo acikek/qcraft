@@ -56,8 +56,9 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
 
         public enum Error {
 
-            MISSING_PYLONS("pylon_missing"),
-            MISALIGNED("pylon_misaligned"),
+            MISSING_FREQUENCY("missing_frequency"),
+            MISSING_PYLONS("missing_pylons"),
+            MISALIGNED("misaligned"),
             PYLON_DISTANCES("pylon_distances"),
             PYLON_HEIGHTS("pylon_heights"),
             MISSING_COUNTERPART("missing_counterpart"),
@@ -67,8 +68,9 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
 
             public static DataResult<Error> validate(String id) {
                 return switch (id) {
-                    case "pylon_missing" -> DataResult.success(MISSING_PYLONS);
-                    case "pylon_misaligned" -> DataResult.success(MISALIGNED);
+                    case "missing_frequency" -> DataResult.success(MISSING_FREQUENCY);
+                    case "missing_pylons" -> DataResult.success(MISSING_PYLONS);
+                    case "misaligned" -> DataResult.success(MISALIGNED);
                     case "pylon_distances" -> DataResult.success(PYLON_DISTANCES);
                     case "pylon_heights" -> DataResult.success(PYLON_HEIGHTS);
                     case "missing_counterpart" -> DataResult.success(MISSING_COUNTERPART);
@@ -289,31 +291,37 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
     public static Result<Result.Teleportation> getConnection(World world, BlockPos pos) {
         QuantumComputerData data = QuantumComputerData.get(world);
         AtomicReference<Result<Result.Teleportation>> connection = new AtomicReference<>();
-        data.locations.get(pos).ifPresent(location -> data.frequencies.ifPresent(location, pair -> {
-            QuantumComputerLocation other = pair.getOther(location);
-            if (other == null) {
-                connection.set(new Result<>(Result.Error.MISSING_COUNTERPART));
+        data.locations.get(pos).ifPresent(location -> {
+            if (location.frequency.isEmpty()) {
+                connection.set(new Result<>(Result.Error.MISSING_FREQUENCY));
                 return;
             }
-            Result<Result.Value> result = getPylons(world, location.pos);
-            if (result.error.isPresent()) {
-                connection.set(new Result<>(result.error.get()));
-                return;
-            }
-            Result<Result.Value> otherResult = getPylons(world, other.pos);
-            if (otherResult.error.isPresent()) {
-                connection.set(new Result<>(Result.Error.ERRORED_COUNTERPART));
-                return;
-            }
-            if (result.value.isEmpty() || otherResult.value.isEmpty()) {
-                return;
-            }
-            connection.set(Result.Teleportation.fromConnection(
-                    validateConnection(result.value.get(), otherResult.value.get()),
-                    location.pos,
-                    other.pos
-            ));
-        }));
+            data.frequencies.ifPresent(location, pair -> {
+                QuantumComputerLocation other = pair.getOther(location);
+                if (other == null) {
+                    connection.set(new Result<>(Result.Error.MISSING_COUNTERPART));
+                    return;
+                }
+                Result<Result.Value> result = getPylons(world, location.pos);
+                if (result.error.isPresent()) {
+                    connection.set(new Result<>(result.error.get()));
+                    return;
+                }
+                Result<Result.Value> otherResult = getPylons(world, other.pos);
+                if (otherResult.error.isPresent()) {
+                    connection.set(new Result<>(Result.Error.ERRORED_COUNTERPART));
+                    return;
+                }
+                if (result.value.isEmpty() || otherResult.value.isEmpty()) {
+                    return;
+                }
+                connection.set(Result.Teleportation.fromConnection(
+                        validateConnection(result.value.get(), otherResult.value.get()),
+                        location.pos,
+                        other.pos
+                ));
+            });
+        });
         return connection.get();
     }
 
