@@ -44,11 +44,6 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
         return pitchDiff < PITCH_THRESHOLD && (viewportIntersectsYAxis || yawDiff < YAW_THRESHOLD);
     }
 
-    // TODO
-    public boolean viewUnobstructed(ServerWorld world, PlayerEntity player, QBlockLocation location) {
-        return true;
-    }
-
     @Override
     public void onStartTick(ServerWorld world) {
         if (data == null) {
@@ -67,7 +62,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
             if (Goggles.isWearingGoggles(player, Goggles.Type.ANTI_OBSERVATION)) {
                 return;
             }
-            List<QBlockLocation> localLocations = data.getLocalLocations(loadedLocations, player);
+            List<QBlockLocation> localLocations = data.getLocalLocations(world, loadedLocations, player);
             if (localLocations.isEmpty()) {
                 return;
             }

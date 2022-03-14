@@ -80,9 +80,9 @@ public class QBlockData extends LocationState<QBlockLocation, QBlockLocation.Pai
      * @return The {@link QBlockLocation}s that are within a close distance of the player.
      * @see QBlockData#getLoadedLocations(ServerWorld)
      */
-    public List<QBlockLocation> getLocalLocations(List<QBlockLocation> loaded, PlayerEntity player) {
+    public List<QBlockLocation> getLocalLocations(ServerWorld world, List<QBlockLocation> loaded, PlayerEntity player) {
         return loaded.stream()
-                .filter(location -> location.pos.isWithinDistance(player.getEyePos(), 160))
+                .filter(location -> location.pos.isWithinDistance(player.getEyePos(), world.getServer().getPlayerManager().getSimulationDistance() * 16))
                 .collect(Collectors.toList());
     }
 
