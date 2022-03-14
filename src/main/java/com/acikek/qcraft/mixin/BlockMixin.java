@@ -24,10 +24,12 @@ import java.util.List;
 @Mixin(Block.class)
 public abstract class BlockMixin {
 
-    private static void setQBlockDrop(ServerWorld world, CallbackInfoReturnable<List<ItemStack>> cir) {
+    private static void setQBlockDrop(ServerWorld world, BlockPos pos, CallbackInfoReturnable<List<ItemStack>> cir) {
         QBlockData data = QBlockData.get(world, false);
         if (data.locations.removed != null) {
-            cir.setReturnValue(List.of(data.locations.removed.getItemStack()));
+            if (data.locations.removed.pos.equals(pos)) {
+                cir.setReturnValue(List.of(data.locations.removed.getItemStack()));
+            }
             data.locations.removed = null;
         }
     }
@@ -41,7 +43,7 @@ public abstract class BlockMixin {
             @Nullable BlockEntity blockEntity,
             CallbackInfoReturnable<List<ItemStack>> cir
     ) {
-        setQBlockDrop(world, cir);
+        setQBlockDrop(world, pos, cir);
     }
 
     @Inject(method = "getDroppedStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)Ljava/util/List;",
@@ -56,7 +58,7 @@ public abstract class BlockMixin {
             CallbackInfoReturnable<List<ItemStack>> cir,
             LootContext.Builder builder
     ) {
-        setQBlockDrop(world, cir);
+        setQBlockDrop(world, pos, cir);
     }
 
     @Inject(method = "onBreak", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "HEAD"))
