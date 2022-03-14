@@ -12,7 +12,7 @@ A reimagination of qCraft for modern Minecraft.
 - Practical redstone randomness
 - Machines that will perform quantum observations automatically
 - Computers that can swap entire regions of the world
-- 
+
 ...and much more! See the [wiki](https://github.com/acikek/qcraft/wiki) for in-depth feature explanations and tutorials.
 
 ## Credits
