@@ -90,11 +90,7 @@ public class QuantumComputerBlockEntity extends BlockEntity implements Implement
 
     @Override
     public int[] getAvailableSlots(Direction side) {
-        int[] result = new int[1];
-        if (!items.get(0).isEmpty()) {
-            result[0] = 1;
-        }
-        return result;
+        return new int[1];
     }
 
     @Override
