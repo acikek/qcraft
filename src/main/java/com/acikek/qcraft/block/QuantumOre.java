@@ -4,7 +4,9 @@ import com.acikek.qcraft.QCraft;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Material;
+import net.minecraft.block.RedstoneOreBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -23,15 +25,17 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.YOffset;
-import net.minecraft.world.gen.decorator.CountPlacementModifier;
-import net.minecraft.world.gen.decorator.HeightRangePlacementModifier;
-import net.minecraft.world.gen.decorator.SquarePlacementModifier;
 import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.placementmodifier.CountPlacementModifier;
+import net.minecraft.world.gen.placementmodifier.HeightRangePlacementModifier;
+import net.minecraft.world.gen.placementmodifier.SquarePlacementModifier;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class QuantumOre extends RedstoneOreBlock {
@@ -55,27 +59,38 @@ public class QuantumOre extends RedstoneOreBlock {
     public static PlacedFeature DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE;
 
     public static void createFeatures() {
-        QUANTUM_ORE_CONFIGURED_FEATURE = Feature.ORE
-                .configure(new OreFeatureConfig(
+
+        QUANTUM_ORE_CONFIGURED_FEATURE = new ConfiguredFeature<>(
+                Feature.ORE,
+                new OreFeatureConfig(
                         OreConfiguredFeatures.STONE_ORE_REPLACEABLES,
                         Blocks.QUANTUM_ORE.getDefaultState(),
                         8
-                ));
-        DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE = Feature.ORE
-                .configure(new OreFeatureConfig(
+                )
+        );
+        DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE = new ConfiguredFeature<>(
+                Feature.ORE,
+                new OreFeatureConfig(
                         OreConfiguredFeatures.DEEPSLATE_ORE_REPLACEABLES,
                         Blocks.DEEPSLATE_QUANTUM_ORE.getDefaultState(),
                         8
-                ));
-        QUANTUM_ORE_PLACED_FEATURE = QUANTUM_ORE_CONFIGURED_FEATURE.withPlacement(
-                CountPlacementModifier.of(8),
-                SquarePlacementModifier.of(),
-                HeightRangePlacementModifier.uniform(YOffset.getBottom(), YOffset.fixed(15))
+                )
         );
-        DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE = DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE.withPlacement(
-                CountPlacementModifier.of(8),
-                SquarePlacementModifier.of(),
-                HeightRangePlacementModifier.trapezoid(YOffset.aboveBottom(-32), YOffset.aboveBottom(32))
+        QUANTUM_ORE_PLACED_FEATURE = new PlacedFeature(
+                RegistryEntry.of(QUANTUM_ORE_CONFIGURED_FEATURE),
+                Arrays.asList(
+                        CountPlacementModifier.of(8),
+                        SquarePlacementModifier.of(),
+                        HeightRangePlacementModifier.uniform(YOffset.getBottom(), YOffset.fixed(15))
+                )
+        );
+        DEEPSLATE_QUANTUM_ORE_PLACED_FEATURE = new PlacedFeature(
+                RegistryEntry.of(DEEPSLATE_QUANTUM_ORE_CONFIGURED_FEATURE),
+                Arrays.asList(
+                    CountPlacementModifier.of(8),
+                    SquarePlacementModifier.of(),
+                    HeightRangePlacementModifier.trapezoid(YOffset.aboveBottom(-32), YOffset.aboveBottom(32))
+                )
         );
     }
 
