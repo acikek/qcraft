@@ -3,9 +3,10 @@
   "id": "qcraft",
   "version": "0.1.0",
   "name": "qCraft Reimagined",
-  "description": "A port of qCraft to modern-day Fabric.",
+  "description": "A reimagination of qCraft in modern Minecraft.",
   "authors": [
-    "acikek"
+    "acikek",
+    "VirtuaLilith"
   ],
   "contact": {
     "repo": "https://github.com/acikek/qcraft"
