@@ -9,7 +9,9 @@
     "VirtuaLilith"
   ],
   "contact": {
-    "repo": "https://github.com/acikek/qcraft"
+    "sources": "https://github.com/acikek/qcraft",
+    "homepage": "https://github.com/acikek/qcraft#README",
+    "issues": "https://github.com/acikek/qcraft/issues"
   },
   "license": "MIT",
   "icon": "assets/qcraft/icon.png",
