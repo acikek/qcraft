@@ -1,13 +1,12 @@
 package com.acikek.qcraft.block.quantum_computer;
 
+import com.acikek.qcraft.block.FrequentialItem;
 import com.acikek.qcraft.world.state.QuantumComputerData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 
-public class QuantumComputerItem extends BlockItem {
+public class QuantumComputerItem extends FrequentialItem {
 
     public QuantumComputerItem(Block block, Settings settings) {
         super(block, settings);
@@ -22,10 +21,5 @@ public class QuantumComputerItem extends BlockItem {
             return true;
         }
         return false;
-    }
-
-    public static boolean isAvailable(ItemStack stack) {
-        return stack.getItem() instanceof QuantumComputerItem
-                && !stack.getOrCreateNbt().containsUuid("frequency");
     }
 }

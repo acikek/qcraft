@@ -1,6 +1,7 @@
 package com.acikek.qcraft.recipe;
 
 import com.acikek.qcraft.QCraft;
+import com.acikek.qcraft.block.FrequentialItem;
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import com.acikek.qcraft.item.Essence;
 import net.minecraft.inventory.CraftingInventory;
@@ -45,7 +46,13 @@ public class EntangledPairRecipe extends SpecialCraftingRecipe {
         if (essenceSlot == -1 || ((Essence) inventory.getStack(essenceSlot).getItem()).essenceType != Essence.Type.ENTANGLEMENT) {
             return false;
         }
-        return QBlockItem.checkStacks(inventory.getStack(essenceSlot - 1), inventory.getStack(essenceSlot + 1));
+        ItemStack left = inventory.getStack(essenceSlot - 1);
+        ItemStack right = inventory.getStack(essenceSlot + 1);
+        if (left.getItem() != right.getItem()) {
+            return false;
+        }
+        System.out.println("yes");
+        return FrequentialItem.checkStacks(left, right, left.getItem() instanceof QBlockItem);
     }
 
     @Override

@@ -1,13 +1,12 @@
 package com.acikek.qcraft.block.qblock;
 
-import com.acikek.qcraft.block.quantum_computer.QuantumComputerItem;
+import com.acikek.qcraft.block.FrequentialItem;
 import com.acikek.qcraft.item.Goggles;
 import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.location.QBlockLocation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class QBlockItem extends BlockItem {
+public class QBlockItem extends FrequentialItem {
 
     public QBlockItem(Block block, Settings settings) {
         super(block, settings);
@@ -67,13 +66,12 @@ public class QBlockItem extends BlockItem {
         return faces;
     }
 
-    public static boolean checkStacks(ItemStack left, ItemStack right) {
-        if (left.isEmpty() || right.isEmpty()) {
-            return false;
+    public static boolean equals(ItemStack stack, ItemStack other) {
+        if (stack.getItem() instanceof QBlockItem left && other.getItem() instanceof QBlockItem right) {
+            return QBlock.getBlockFromItem(left).type == QBlock.getBlockFromItem(right).type
+                    && Arrays.equals(getFaces(stack), getFaces(other));
         }
-        return (QuantumComputerItem.isAvailable(left) && QuantumComputerItem.isAvailable(right))
-                || (QBlock.getBlockFromItem(left.getItem()).type == QBlock.getBlockFromItem(right.getItem()).type
-                    && Arrays.equals(getFaces(left), getFaces(right)));
+        return false;
     }
 
     public static MutableText formatFace(MutableText face, MutableText block) {
