@@ -3,7 +3,6 @@ package com.acikek.qcraft.recipe;
 import com.acikek.qcraft.QCraft;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
-import com.acikek.qcraft.item.Essence;
 import com.acikek.qcraft.item.QBlockEssence;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.BlockItem;
@@ -54,21 +53,18 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
 
     @Override
     public boolean matches(CraftingInventory inventory, World world) {
-        int essenceSlot = Essence.findSlot(inventory);
-        if (essenceSlot < QBlock.Face.CENTER
-                || !(inventory.getStack(essenceSlot).getItem() instanceof QBlockEssence)) {
+        if (!(inventory.getStack(QBlock.Face.CENTER).getItem() instanceof QBlockEssence)) {
             return false;
         }
-        int diff = essenceSlot - QBlock.Face.CENTER;
         for (int i : QBlock.Face.EMPTY_SLOTS) {
-            if (!inventory.getStack(i + diff).isEmpty()) {
+            if (!inventory.getStack(i).isEmpty()) {
                 return false;
             }
         }
         Item faceItem = null;
         boolean oneDifferent = false;
         for (QBlock.Face face : QBlock.Face.values()) {
-            ItemStack stack = inventory.getStack(face.slot + diff);
+            ItemStack stack = inventory.getStack(face.slot);
             Item item = stack.getItem();
             if (!stack.isEmpty() && (!(item instanceof BlockItem) || item instanceof QBlockItem)) {
                 return false;
