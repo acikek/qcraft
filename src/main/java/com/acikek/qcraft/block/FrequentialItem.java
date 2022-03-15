@@ -2,8 +2,15 @@ package com.acikek.qcraft.block;
 
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import net.minecraft.block.Block;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class FrequentialItem extends BlockItem {
 
@@ -24,5 +31,21 @@ public class FrequentialItem extends BlockItem {
             return QBlockItem.equals(left, right);
         }
         return true;
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        if (stack.getOrCreateNbt().containsUuid("frequency")) {
+            String uuid = stack.getOrCreateNbt().getUuid("frequency").toString();
+            String snippet = uuid.substring(0, uuid.indexOf('-')) + "...";
+            MutableText frequency = new TranslatableText("tooltip.qcraft.frequency")
+                    .append(": ")
+                    .setStyle(Style.EMPTY.withItalic(false))
+                    .formatted(Formatting.GRAY);
+            Text text = new LiteralText(snippet)
+                    .formatted(Formatting.DARK_AQUA);
+            frequency.append(text);
+            tooltip.add(frequency);
+        }
     }
 }

@@ -91,7 +91,7 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
             this.slot = slot;
             this.index = index;
             this.direction = direction;
-            text = new TranslatableText("face.qcraft." + name);
+            text = new TranslatableText("tooltip.qcraft." + name);
         }
 
         public Face getOpposite() {

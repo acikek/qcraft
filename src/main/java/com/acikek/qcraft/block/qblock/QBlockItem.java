@@ -94,5 +94,6 @@ public class QBlockItem extends FrequentialItem {
             MutableText block = Registry.BLOCK.get(Identifier.tryParse(faces[i])).getName();
             tooltip.add(formatFace(face, block));
         }
+        super.appendTooltip(stack, world, tooltip, context);
     }
 }
