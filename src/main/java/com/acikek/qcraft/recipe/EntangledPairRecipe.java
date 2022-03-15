@@ -46,12 +46,17 @@ public class EntangledPairRecipe extends SpecialCraftingRecipe {
         if (essenceSlot == -1 || ((Essence) inventory.getStack(essenceSlot).getItem()).essenceType != Essence.Type.ENTANGLEMENT) {
             return false;
         }
+        for (int i = 0; i < inventory.size(); i++) {
+            System.out.println(i + " " + essenceSlot);
+            if ((i < essenceSlot - 1 || i > essenceSlot + 1) && !inventory.getStack(i).isEmpty()) {
+                return false;
+            }
+        }
         ItemStack left = inventory.getStack(essenceSlot - 1);
         ItemStack right = inventory.getStack(essenceSlot + 1);
         if (left.getItem() != right.getItem()) {
             return false;
         }
-        System.out.println("yes");
         return FrequentialItem.checkStacks(left, right, left.getItem() instanceof QBlockItem);
     }
 
