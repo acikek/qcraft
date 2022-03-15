@@ -65,20 +65,22 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
                 return false;
             }
         }
-        boolean atLeastOne = false;
+        Item faceItem = null;
+        boolean oneDifferent = false;
         for (QBlock.Face face : QBlock.Face.values()) {
-            ItemStack slot = inventory.getStack(face.slot + diff);
-            if (slot.isEmpty()) {
-                continue;
-            }
-            if (!(slot.getItem() instanceof BlockItem) || slot.getItem() instanceof QBlockItem) {
+            ItemStack stack = inventory.getStack(face.slot + diff);
+            Item item = stack.getItem();
+            if (!stack.isEmpty() && (!(item instanceof BlockItem) || item instanceof QBlockItem)) {
                 return false;
             }
-            if (!atLeastOne) {
-                atLeastOne = true;
+            if (faceItem == null) {
+                faceItem = item;
+            }
+            else if (item != faceItem) {
+                oneDifferent = true;
             }
         }
-        return atLeastOne;
+        return oneDifferent;
     }
 
     @Override
