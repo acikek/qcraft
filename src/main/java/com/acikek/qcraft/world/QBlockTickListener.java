@@ -60,11 +60,11 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
         List<QBlockLocation> unobservationQueue = new ArrayList<>();
         for (PlayerEntity player : world.getPlayers()) {
             if (Goggles.isWearingGoggles(player, Goggles.Type.ANTI_OBSERVATION)) {
-                return;
+                continue;
             }
             List<QBlockLocation> localLocations = data.getLocalLocations(world, loadedLocations, player);
             if (localLocations.isEmpty()) {
-                return;
+                continue;
             }
             Vec3d center = player.getPos().lerp(player.getEyePos(), 0.5);
             for (QBlockLocation location : localLocations) {
@@ -81,7 +81,7 @@ public class QBlockTickListener implements ServerTickEvents.StartWorldTick {
                         data.observe(location, world, player);
                     }
                 }
-                else if (location.observed && data.canBeUnobserved(location, center) && !observed.contains(location)) {
+                else if (location.observed && data.canBeUnobserved(location, center) && !observed.contains(location) && !unobservationQueue.contains(location)) {
                     unobservationQueue.add(location);
                 }
             }
