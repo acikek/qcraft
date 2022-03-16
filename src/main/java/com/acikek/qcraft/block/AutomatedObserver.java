@@ -48,7 +48,7 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
                     if (!location.observed && data.getOtherNotObserved(location)) {
                         PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10.0, false);
                         QBlock.Face face = location.type.pickFace(state.get(FACING), world.random);
-                        data.observe(location, world, face, player, QBlock.Observation.AUTOMATED_OBSERVER, false);
+                        data.observe(location, world, face, QBlock.Observation.AUTOMATED_OBSERVER, player);
                     }
                 }
                 else if (location.observed) {

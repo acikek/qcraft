@@ -127,16 +127,20 @@ public class QBlockData extends LocationState<QBlockLocation, QBlockLocation.Pai
 
     public void observe(QBlockLocation location, World world, PlayerEntity player) {
         QBlock.Face face = location.pickFace(player, world);
-        observe(location, world, face, player, QBlock.Observation.PLAYER, false);
+        observe(location, world, face, QBlock.Observation.PLAYER, player);
+    }
+
+    public void observe(QBlockLocation location, World world, QBlock.Face face, QBlock.Observation type, PlayerEntity player) {
+        observe(location, world, face, type, player, false);
         frequencies.ifPresent(location, pair -> {
             QBlockLocation other = pair.getOther(location);
             if (other != null) {
-                observe(other, world, face, player, QBlock.Observation.PLAYER, true);
+                observe(other, world, face, type, player, true);
             }
         });
     }
 
-    public void observe(QBlockLocation location, World world, QBlock.Face face, PlayerEntity player, QBlock.Observation type, boolean entangled) {
+    public void observe(QBlockLocation location, World world, QBlock.Face face,  QBlock.Observation type, PlayerEntity player, boolean entangled) {
         setFaceBlock(location, world, face);
         if (!entangled) {
             location.observed = true;
