@@ -22,7 +22,7 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
 
     public static final Settings DEFAULT_SETTINGS = FabricBlockSettings.of(Material.DECORATION)
             .breakInstantly()
-            .sounds(BlockSoundGroup.METAL);
+            .sounds(BlockSoundGroup.WOOD);
 
     public AutomatedObserver() {
         super(DEFAULT_SETTINGS);
