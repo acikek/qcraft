@@ -26,13 +26,6 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
         super(id);
     }
 
-    public static void applyFaces(ItemStack stack, List<String> faces) {
-        for (int i = 0; i < faces.size(); i++) {
-            String faceName = QBlock.Face.values()[i].name();
-            stack.getOrCreateSubNbt("faces").putString(faceName, faces.get(i));
-        }
-    }
-
     @Override
     public ItemStack craft(CraftingInventory inventory) {
         QBlockEssence essence = (QBlockEssence) inventory.getStack(QBlock.Face.CENTER).getItem();
@@ -42,7 +35,7 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
             faces.add(Registry.ITEM.getId(item).toString());
         }
         ItemStack stack = new ItemStack(essence.getQBlock());
-        applyFaces(stack, faces);
+        QBlockItem.applyFaces(stack, faces);
         return stack;
     }
 

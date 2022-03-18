@@ -8,6 +8,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Direction;
@@ -103,6 +104,10 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
                 case DOWN -> UP;
                 case SOUTH -> NORTH;
             };
+        }
+
+        public void apply(ItemStack stack, String value) {
+            stack.getOrCreateSubNbt("faces").putString(name(), value);
         }
 
         public static Face from(Direction direction) {

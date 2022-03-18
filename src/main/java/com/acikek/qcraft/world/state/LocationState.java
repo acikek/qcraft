@@ -18,9 +18,22 @@ public abstract class LocationState<T extends Frequential, P extends Pair<T>> ex
     public LocationState() {
     }
 
-    public void reset() {
+    public int clearLocations() {
+        int size = locations.list.size();
         locations.list.clear();
+        markDirty();
+        return size;
+    }
+
+    public int clearFrequencies() {
+        int size = frequencies.map.size();
         frequencies.map.clear();
+        markDirty();
+        return size;
+    }
+
+    public int reset() {
+        return clearLocations() + clearFrequencies();
     }
 
     public void fill(List<T> locations, Function<T, P> f) {

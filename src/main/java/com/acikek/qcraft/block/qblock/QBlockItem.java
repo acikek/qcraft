@@ -1,5 +1,6 @@
 package com.acikek.qcraft.block.qblock;
 
+import com.acikek.qcraft.block.Blocks;
 import com.acikek.qcraft.block.FrequentialItem;
 import com.acikek.qcraft.item.Goggles;
 import com.acikek.qcraft.world.state.QBlockData;
@@ -21,6 +22,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class QBlockItem extends FrequentialItem {
@@ -74,6 +76,12 @@ public class QBlockItem extends FrequentialItem {
         return false;
     }
 
+    public static void applyFaces(ItemStack stack, List<String> faces) {
+        for (int i = 0; i < faces.size(); i++) {
+            QBlock.Face.values()[i].apply(stack, faces.get(i));
+        }
+    }
+
     public static MutableText formatFace(MutableText face, MutableText block) {
         block.setStyle(block.getStyle().withItalic(false)).formatted(Formatting.GRAY);
         MutableText faceText = new LiteralText(" (").append(face).append(")")
@@ -81,6 +89,18 @@ public class QBlockItem extends FrequentialItem {
                 .formatted(Formatting.DARK_GRAY);
         block.append(faceText);
         return block;
+    }
+
+    public static ItemStack[] getPylonBases() {
+        ItemStack stack = new ItemStack(Blocks.OBSERVER_DEPENDENT_BLOCK);
+        applyFaces(stack, Collections.nCopies(6, "minecraft:obsidian"));
+        ItemStack[] stacks = new ItemStack[4];
+        for (int i = 0; i < stacks.length; i++) {
+            ItemStack base = stack.copy();
+            QBlock.Face.CARDINALS[i].apply(base, "minecraft:gold_block");
+            stacks[i] = base;
+        }
+        return stacks;
     }
 
     @Override

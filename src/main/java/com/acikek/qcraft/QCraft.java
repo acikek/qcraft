@@ -5,7 +5,7 @@ import com.acikek.qcraft.block.Blocks;
 import com.acikek.qcraft.block.QuantumOre;
 import com.acikek.qcraft.block.quantum_computer.QuantumComputerBlockEntity;
 import com.acikek.qcraft.block.quantum_computer.QuantumComputerGuiDescription;
-import com.acikek.qcraft.command.ClearQBlocksCommand;
+import com.acikek.qcraft.command.QCraftCommand;
 import com.acikek.qcraft.item.Items;
 import com.acikek.qcraft.recipe.CoolantCellRefillRecipe;
 import com.acikek.qcraft.recipe.EntangledPairRecipe;
@@ -54,7 +54,7 @@ public class QCraft implements ModInitializer {
         QuantumOre.registerFeatures();
         QuantumComputerBlockEntity.register();
         QuantumComputerGuiDescription.register();
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> new ClearQBlocksCommand().register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> new QCraftCommand().register(dispatcher));
         ServerTickEvents.START_WORLD_TICK.register(new QBlockTickListener());
     }
 }

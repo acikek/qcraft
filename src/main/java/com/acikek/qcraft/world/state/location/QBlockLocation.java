@@ -3,7 +3,6 @@ package com.acikek.qcraft.world.state.location;
 import com.acikek.qcraft.block.qblock.InertQBlock;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
-import com.acikek.qcraft.recipe.QBlockRecipe;
 import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.frequency.Frequential;
 import com.mojang.serialization.Codec;
@@ -74,11 +73,11 @@ public class QBlockLocation extends Frequential {
 
     /**
      * @return The stack, based on block type, with the faces applied to its NBT.
-     * @see QBlockRecipe#applyFaces(ItemStack, List)
+     * @see QBlockItem#applyFaces(ItemStack, List)
      */
     public ItemStack getItemStack() {
         ItemStack stack = new ItemStack(type.resolveBlock());
-        QBlockRecipe.applyFaces(stack, faces);
+        QBlockItem.applyFaces(stack, faces);
         frequency.ifPresent(f -> stack.getOrCreateNbt().putUuid("frequency", f));
         return stack;
     }
