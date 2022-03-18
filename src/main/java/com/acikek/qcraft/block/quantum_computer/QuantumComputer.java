@@ -35,6 +35,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
@@ -267,22 +268,14 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
         return new Result<>(new Result.Connection(here, other));
     }
 
-    public static Iterable<BlockPos> collectPositions(BlockPos pos, Result.Value result) {
+    public static Box collectPositions(BlockPos pos, Result.Value result) {
         BlockPos corner1 = pos.add(result.offsets.get(2) - 1, 0, -result.offsets.get(0) + 1);
         BlockPos corner2 = pos.add(-result.offsets.get(3) + 1, result.height - 1, result.offsets.get(1) - 1);
-        return BlockPos.iterate(corner1, corner2);
+        return new Box(corner1, corner2);
     }
 
-    public static List<BlockState> collectStates(World world,Iterable<BlockPos> positions) {
-        List<BlockState> result = new ArrayList<>();
-        for (BlockPos pos : positions) {
-            result.add(world.getBlockState(pos));
-        }
-        return result;
-    }
-
-    public static void setStates(World world, Iterable<BlockPos> positions, List<BlockState> states) {
-        Iterator<BlockPos> iter = positions.iterator();
+    public static void setStates(World world, Box positions, List<BlockState> states) {
+        Iterator<BlockPos> iter = BlockPos.stream(positions).iterator();
         for (BlockState state : states) {
             if (iter.hasNext()) {
                 BlockPos pos = iter.next();
@@ -340,10 +333,10 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
     }
 
     public static void teleport(World world, PlayerEntity player, Result.Teleportation teleportation) {
-        Iterable<BlockPos> positions = collectPositions(teleportation.start, teleportation.here);
-        Iterable<BlockPos> otherPositions = collectPositions(teleportation.end, teleportation.other);
-        List<BlockState> states = collectStates(world, positions);
-        List<BlockState> otherStates = collectStates(world, otherPositions);
+        Box positions = collectPositions(teleportation.start, teleportation.here);
+        Box otherPositions = collectPositions(teleportation.end, teleportation.other);
+        List<BlockState> states = world.getStatesInBox(positions).toList();
+        List<BlockState> otherStates = world.getStatesInBox(otherPositions).toList();
         setStates(world, positions, otherStates);
         setStates(world, otherPositions, states);
         teleportation.toBoth(pos -> playEffects(world, pos));
