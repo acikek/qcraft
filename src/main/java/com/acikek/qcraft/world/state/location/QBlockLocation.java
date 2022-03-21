@@ -7,18 +7,16 @@ import com.acikek.qcraft.world.state.QBlockData;
 import com.acikek.qcraft.world.state.frequency.Frequential;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,7 +28,7 @@ public class QBlockLocation extends Frequential {
                     BlockPos.CODEC.fieldOf("pos").forGetter(l -> l.pos),
                     DynamicSerializableUuid.CODEC.optionalFieldOf("frequency").forGetter(l -> l.frequency),
                     QBlock.Type.CODEC.fieldOf("type").forGetter(l -> l.type),
-                    Codec.list(Codec.STRING).fieldOf("faces").forGetter(l -> l.faces),
+                    Codec.list(BlockState.CODEC).fieldOf("faces").forGetter(l -> l.faces),
                     Codec.BOOL.fieldOf("observed").forGetter(l -> l.observed)
             )
             .apply(instance, QBlockLocation::new)
@@ -38,9 +36,11 @@ public class QBlockLocation extends Frequential {
 
     public static final Codec<List<QBlockLocation>> LIST_CODEC = Codec.list(CODEC);
 
-    public final QBlock.Type type;
-    public final List<String> faces;
+    public QBlock.Type type;
+    public List<BlockState> faces = new ArrayList<>();
     public boolean observed;
+
+    public QBlock.Face observedFace = null;
 
     /**
      * Constructs a {@link QBlockLocation}.<br>
@@ -52,23 +52,18 @@ public class QBlockLocation extends Frequential {
      * @param observed  Whether this location is currently observed.
      * @param frequency The String UUID of the location's entanglement frequency.
      */
-    public QBlockLocation(BlockPos pos, Optional<UUID> frequency, QBlock.Type type, List<String> faces, boolean observed) {
+    public QBlockLocation(BlockPos pos, Optional<UUID> frequency, QBlock.Type type, List<BlockState> faces, boolean observed) {
         super(pos, frequency);
         this.type = type;
-        this.faces = faces;
+        this.faces.addAll(faces);
         this.observed = observed;
-    }
-
-    public Block getFaceBlock(int index) {
-        return Registry.BLOCK.get(Identifier.tryParse(faces.get(index)));
     }
 
     /**
      * @return The block at the specified face.
-     * @see QBlockLocation#getFaceBlock(QBlock.Face)
      */
-    public Block getFaceBlock(QBlock.Face face) {
-        return getFaceBlock(face.index);
+    public BlockState getFaceState(QBlock.Face face) {
+        return faces.get(face.index);
     }
 
     /**
@@ -129,12 +124,15 @@ public class QBlockLocation extends Frequential {
      * @return Whether the specified block state is impossible given the valid block faces.
      */
     public boolean isStateImpossible(BlockState state) {
-        Block block = state.getBlock();
-        if (block instanceof InertQBlock) {
+        if (state.getBlock() instanceof InertQBlock) {
             return false;
         }
-        String id = Registry.BLOCK.getId(block).toString();
-        return !faces.contains(id);
+        for (BlockState face : faces) {
+            if (face.getBlock() == state.getBlock()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isPylonBase(QBlock.Face face) {
@@ -142,8 +140,8 @@ public class QBlockLocation extends Frequential {
             return false;
         }
         for (int i = 0; i < faces.size(); i++) {
-            Block block = getFaceBlock(i);
-            if ((face.index == i && block != Blocks.GOLD_BLOCK) || (face.index != i && block != Blocks.OBSIDIAN)) {
+            BlockState state = faces.get(i);
+            if ((face.index == i && state.getBlock() != Blocks.GOLD_BLOCK) || (face.index != i && state.getBlock() != Blocks.OBSIDIAN)) {
                 return false;
             }
         }

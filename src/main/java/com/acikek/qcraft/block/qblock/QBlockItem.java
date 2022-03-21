@@ -11,13 +11,12 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,14 +55,14 @@ public class QBlockItem extends FrequentialItem {
         return false;
     }
 
-    public static String[] getFaces(ItemStack stack) {
+    public static BlockState[] getFaces(ItemStack stack) {
         NbtCompound nbt = stack.getSubNbt("faces");
         if (nbt == null) {
             return null;
         }
-        String[] faces = new String[6];
+        BlockState[] faces = new BlockState[6];
         for (int i = 0; i < faces.length; i++) {
-            faces[i] = nbt.getString(QBlock.Face.values()[i].name());
+            faces[i] = NbtHelper.toBlockState(nbt.getCompound(QBlock.Face.values()[i].name()));
         }
         return faces;
     }
@@ -76,7 +75,7 @@ public class QBlockItem extends FrequentialItem {
         return false;
     }
 
-    public static void applyFaces(ItemStack stack, List<String> faces) {
+    public static void applyFaces(ItemStack stack, List<BlockState> faces) {
         for (int i = 0; i < faces.size(); i++) {
             QBlock.Face.values()[i].apply(stack, faces.get(i));
         }
@@ -93,11 +92,11 @@ public class QBlockItem extends FrequentialItem {
 
     public static ItemStack[] getPylonBases() {
         ItemStack stack = new ItemStack(Blocks.OBSERVER_DEPENDENT_BLOCK);
-        applyFaces(stack, Collections.nCopies(6, "minecraft:obsidian"));
+        applyFaces(stack, Collections.nCopies(6, net.minecraft.block.Blocks.OBSIDIAN.getDefaultState()));
         ItemStack[] stacks = new ItemStack[4];
         for (int i = 0; i < stacks.length; i++) {
             ItemStack base = stack.copy();
-            QBlock.Face.CARDINALS[i].apply(base, "minecraft:gold_block");
+            QBlock.Face.CARDINALS[i].apply(base, net.minecraft.block.Blocks.GOLD_BLOCK.getDefaultState());
             stacks[i] = base;
         }
         return stacks;
@@ -105,13 +104,13 @@ public class QBlockItem extends FrequentialItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        String[] faces = getFaces(stack);
+        BlockState[] faces = getFaces(stack);
         if (faces == null) {
             return;
         }
         for (int i = 0; i < faces.length; i++) {
             MutableText face = QBlock.Face.values()[i].text;
-            MutableText block = Registry.BLOCK.get(Identifier.tryParse(faces[i])).getName();
+            MutableText block = faces[i].getBlock().getName();
             tooltip.add(formatFace(face, block));
         }
         super.appendTooltip(stack, world, tooltip, context);
