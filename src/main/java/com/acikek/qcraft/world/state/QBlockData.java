@@ -16,7 +16,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -93,13 +95,12 @@ public class QBlockData extends LocationState<QBlockLocation, QBlockLocation.Pai
         if (locations.has(blockPos)) {
             return null;
         }
-        BlockState[] faces = QBlockItem.getFaces(stack);
+        String[] faces = QBlockItem.getFaces(stack);
         if (faces == null) {
             return null;
         }
         Optional<UUID> frequency = Frequential.getFrequency(stack);
-        List<BlockState> states = new ArrayList<>(Arrays.asList(faces));
-        QBlockLocation result = new QBlockLocation(blockPos, frequency, type, states, false);
+        QBlockLocation result = new QBlockLocation(blockPos, frequency, type, List.of(faces), false);
         locations.list.add(result);
         frequency.ifPresent(f -> frequencies.add(f, result, QBlockLocation.Pair::new));
         markDirty();
@@ -116,7 +117,7 @@ public class QBlockData extends LocationState<QBlockLocation, QBlockLocation.Pai
     }
 
     public void setFaceBlock(QBlockLocation location, World world, QBlock.Face face) {
-        BlockState state = location.getFaceState(face);
+        BlockState state = location.getFaceBlock(face).getDefaultState();
         setBlockState(world, location.pos, state);
     }
 
@@ -144,22 +145,14 @@ public class QBlockData extends LocationState<QBlockLocation, QBlockLocation.Pai
         if (!entangled) {
             location.observed = true;
         }
-        if (location.observedFace == null) {
-            location.observedFace = face;
-        }
         if (player != null) {
             Criteria.QUANTUM_OBSERVATION.trigger((ServerPlayerEntity) player, location.pos, type, location.type, entangled);
         }
     }
 
     public void unobserve(QBlockLocation location, World world, boolean checkFrequency) {
-        if (location.observedFace != null) {
-            BlockState state = world.getBlockState(location.pos);
-            location.faces.set(location.observedFace.index, state);
-            location.observedFace = null;
-        }
-        BlockState inert = location.type.resolveInert().getDefaultState();
-        setBlockState(world, location.pos, inert);
+        BlockState state = location.type.resolveInert().getDefaultState();
+        setBlockState(world, location.pos, state);
         location.observed = false;
         if (checkFrequency) {
             frequencies.ifPresent(location, pair -> {

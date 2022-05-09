@@ -6,11 +6,9 @@ import com.acikek.qcraft.world.state.location.QBlockLocation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtHelper;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Direction;
@@ -108,8 +106,8 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
             };
         }
 
-        public void apply(ItemStack stack, BlockState value) {
-            stack.getOrCreateSubNbt("faces").put(name(), NbtHelper.fromBlockState(value));
+        public void apply(ItemStack stack, String value) {
+            stack.getOrCreateSubNbt("faces").putString(name(), value);
         }
 
         public static Face from(Direction direction) {

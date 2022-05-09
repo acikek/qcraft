@@ -4,7 +4,6 @@ import com.acikek.qcraft.QCraft;
 import com.acikek.qcraft.block.qblock.QBlock;
 import com.acikek.qcraft.block.qblock.QBlockItem;
 import com.acikek.qcraft.item.QBlockEssence;
-import net.minecraft.block.BlockState;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -30,12 +29,10 @@ public class QBlockRecipe extends SpecialCraftingRecipe {
     @Override
     public ItemStack craft(CraftingInventory inventory) {
         QBlockEssence essence = (QBlockEssence) inventory.getStack(QBlock.Face.CENTER).getItem();
-        List<BlockState> faces = new ArrayList<>();
+        List<String> faces = new ArrayList<>();
         for (QBlock.Face face : QBlock.Face.values()) {
             Item item = inventory.getStack(face.slot).getItem();
-            if (item instanceof BlockItem blockItem) {
-                faces.add(blockItem.getBlock().getDefaultState());
-            }
+            faces.add(Registry.ITEM.getId(item).toString());
         }
         ItemStack stack = new ItemStack(essence.getQBlock());
         QBlockItem.applyFaces(stack, faces);
