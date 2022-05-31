@@ -111,7 +111,7 @@ public class QCraftCommand implements Command<ServerCommandSource> {
     public int clear(CommandContext<ServerCommandSource> context, String type) throws CommandSyntaxException {
         try {
             ClearType clearType = type != null ? ClearType.valueOf(type) : ClearType.ALL;
-            QBlockData data = QBlockData.get(context.getSource().getWorld(), true);
+            QBlockData data = QBlockData.get(context.getSource().getWorld(), false);
             int cleared = clearType.clear(data);
             Text text = new TranslatableText("command.qcraft.clear.success", cleared, clearType.text);
             context.getSource().getPlayer().sendMessage(text, false);

@@ -42,7 +42,7 @@ public class AutomatedObserver extends AbstractRedstoneGateBlock {
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         super.scheduledTick(state, world, pos, random);
         if (!world.isClient()) {
-            QBlockData data = QBlockData.get(world, true);
+            QBlockData data = QBlockData.get(world, false);
             data.locations.get(pos.offset(state.get(FACING).getOpposite())).ifPresent(location -> {
                 if (hasPower(world, pos, state)) {
                     if (!location.observed && data.getOtherNotObserved(location)) {
