@@ -38,11 +38,11 @@ public class FrequentialItem extends BlockItem {
         if (stack.getOrCreateNbt().containsUuid("frequency")) {
             String uuid = stack.getOrCreateNbt().getUuid("frequency").toString();
             String snippet = uuid.substring(0, uuid.indexOf('-')) + "...";
-            MutableText frequency = new TranslatableText("tooltip.qcraft.frequency")
+            MutableText frequency = Text.translatable("tooltip.qcraft.frequency")
                     .append(": ")
                     .setStyle(Style.EMPTY.withItalic(false))
                     .formatted(Formatting.GRAY);
-            Text text = new LiteralText(snippet)
+            Text text = Text.literal(snippet)
                     .formatted(Formatting.DARK_AQUA);
             frequency.append(text);
             tooltip.add(frequency);

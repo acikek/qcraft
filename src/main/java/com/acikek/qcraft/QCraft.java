@@ -14,7 +14,7 @@ import com.acikek.qcraft.sound.Sounds;
 import com.acikek.qcraft.world.QBlockTickListener;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -54,7 +54,8 @@ public class QCraft implements ModInitializer {
         QuantumOre.registerFeatures();
         QuantumComputerBlockEntity.register();
         QuantumComputerGuiDescription.register();
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> new QCraftCommand().register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                new QCraftCommand().register(dispatcher));
         ServerTickEvents.START_WORLD_TICK.register(new QBlockTickListener());
     }
 }

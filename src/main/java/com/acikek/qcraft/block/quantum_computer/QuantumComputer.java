@@ -30,7 +30,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -101,7 +100,7 @@ public class QuantumComputer extends Block implements BlockItemProvider, BlockEn
             }
 
             public Text getText() {
-                return new TranslatableText("gui." + QCraft.ID + ".error." + id);
+                return Text.translatable("gui." + QCraft.ID + ".error." + id);
             }
         }
 

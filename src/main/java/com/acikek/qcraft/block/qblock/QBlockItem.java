@@ -11,7 +11,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -84,7 +83,7 @@ public class QBlockItem extends FrequentialItem {
 
     public static MutableText formatFace(MutableText face, MutableText block) {
         block.setStyle(block.getStyle().withItalic(false)).formatted(Formatting.GRAY);
-        MutableText faceText = new LiteralText(" (").append(face).append(")")
+        MutableText faceText = Text.literal(" (").append(face).append(")")
                 .setStyle(Style.EMPTY.withItalic(false))
                 .formatted(Formatting.DARK_GRAY);
         block.append(faceText);

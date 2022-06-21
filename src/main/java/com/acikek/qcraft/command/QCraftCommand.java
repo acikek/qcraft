@@ -20,10 +20,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import java.util.Map;
@@ -57,14 +55,14 @@ public class QCraftCommand implements Command<ServerCommandSource> {
             return 1;
         }
         title.styled(style -> style.withBold(true));
-        Text version = new LiteralText(" v" + metadata.getVersion().getFriendlyString())
+        Text version = Text.literal(" v" + metadata.getVersion().getFriendlyString())
                 .styled(style -> style.withBold(false))
                 .formatted(Formatting.GREEN);
         title.append(version);
         Map.Entry<String, String> quote = QUOTES.entrySet().stream().toList().get(context.getSource().getWorld().random.nextInt(QUOTES.size()));
-        MutableText quoteText = new LiteralText("\"" + quote.getKey() + "\"")
+        MutableText quoteText = Text.literal("\"" + quote.getKey() + "\"")
                 .formatted(Formatting.GRAY);
-        Text author = new LiteralText(" - " + quote.getValue())
+        Text author = Text.literal(" - " + quote.getValue())
                 .styled(style -> style.withItalic(true));
         quoteText.append(author);
         context.getSource().getPlayer().sendMessage(title, false);
@@ -81,7 +79,7 @@ public class QCraftCommand implements Command<ServerCommandSource> {
         public Text text;
 
         ClearType(String key) {
-            text = new TranslatableText("command.qcraft.clear." + key);
+            text = Text.translatable("command.qcraft.clear." + key);
         }
 
         public int clear(QBlockData data) {
@@ -113,12 +111,12 @@ public class QCraftCommand implements Command<ServerCommandSource> {
             ClearType clearType = type != null ? ClearType.valueOf(type) : ClearType.ALL;
             QBlockData data = QBlockData.get(context.getSource().getWorld(), false);
             int cleared = clearType.clear(data);
-            Text text = new TranslatableText("command.qcraft.clear.success", cleared, clearType.text);
+            Text text = Text.translatable("command.qcraft.clear.success", cleared, clearType.text);
             context.getSource().getPlayer().sendMessage(text, false);
             return 0;
         }
         catch (IllegalArgumentException e) {
-            throw new CommandException(new TranslatableText("command.qcraft.clear.failure"));
+            throw new CommandException(Text.translatable("command.qcraft.clear.failure"));
         }
     }
 

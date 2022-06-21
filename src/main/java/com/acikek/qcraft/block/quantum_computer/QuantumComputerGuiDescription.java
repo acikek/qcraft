@@ -11,13 +11,13 @@ import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.icon.TextureIcon;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class QuantumComputerGuiDescription extends SyncedGuiDescription {
@@ -45,10 +45,10 @@ public class QuantumComputerGuiDescription extends SyncedGuiDescription {
         WItemSlot itemSlot = WItemSlot.of(blockInventory, 0)
                 .setFilter(stack -> stack.isOf(Items.COOLANT_CELL))
                 .setIcon(new TextureIcon(QCraft.id("textures/gui/coolant_cell_slot.png")));
-        WButton energize = new WButton().setLabel(new TranslatableText("gui.qcraft.energize")).setEnabled(false);
+        WButton energize = new WButton().setLabel(Text.translatable("gui.qcraft.energize")).setEnabled(false);
         result.error.ifPresent(error -> addStatus(root, STATUS_FAILURE, error.getText()));
         result.value.ifPresent(teleportation -> {
-            addStatus(root, STATUS_SUCCESS, new TranslatableText("gui.qcraft.success.quantum_computer"));
+            addStatus(root, STATUS_SUCCESS, Text.translatable("gui.qcraft.success.quantum_computer"));
             energize.setEnabled(true).setOnClick(() -> {
                 ItemStack stack = blockInventory.getStack(0);
                 if (stack.isOf(Items.COOLANT_CELL) && stack.getDamage() < stack.getMaxDamage()) {
@@ -71,6 +71,7 @@ public class QuantumComputerGuiDescription extends SyncedGuiDescription {
         root.validate(this);
     }
 
+    // TODO undeprecate this stuff
     public static void register() {
         SCREEN_HANDLER_TYPE = ScreenHandlerRegistry.registerExtended(QCraft.id("qc_gui"), (syncId, inventory, buf) ->
                 new QuantumComputerGuiDescription(syncId, inventory, ScreenHandlerContext.EMPTY, buf.decode(QuantumComputer.Result.CODEC)));

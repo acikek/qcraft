@@ -1,12 +1,15 @@
 {
   "schemaVersion": 1,
   "id": "qcraft",
-  "version": "1.0.0",
+  "version": "${version}",
   "name": "qCraft Reimagined",
   "description": "A reimagination of qCraft for modern Minecraft.",
   "authors": [
     "acikek",
     "VirtuaLilith"
+  ],
+  "contributors": [
+    "Emmaffle"
   ],
   "contact": {
     "sources": "https://github.com/acikek/qcraft",
@@ -30,6 +33,6 @@
   "depends": {
     "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": "1.18.2"
+    "minecraft": ">=1.19"
   }
 }
