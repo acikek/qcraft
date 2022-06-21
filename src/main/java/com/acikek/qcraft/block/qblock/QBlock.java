@@ -10,11 +10,11 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 
-import java.util.Random;
 import java.util.function.BiFunction;
 
 public class QBlock extends InertQBlock implements BlockItemProvider {
@@ -92,7 +92,7 @@ public class QBlock extends InertQBlock implements BlockItemProvider {
             this.slot = slot;
             this.index = index;
             this.direction = direction;
-            text = new TranslatableText("tooltip.qcraft." + name);
+            text = Text.translatable("tooltip.qcraft." + name);
         }
 
         public Face getOpposite() {
